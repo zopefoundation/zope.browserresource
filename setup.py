@@ -31,7 +31,7 @@ setup(name='zope.browserresource',
                      'Topic :: Internet :: WWW/HTTP',
                      'Framework :: Zope3',
                      ],
-      description='Browser resource implementation for Zope.',
+      description='Browser resources implementation for Zope.',
       long_description=long_description,
 
       packages=find_packages('src'),

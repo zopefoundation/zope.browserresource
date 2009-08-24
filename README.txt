@@ -6,13 +6,8 @@ Overview
 chunk of the Zope Toolkit and its assumptions. It is maintained by the*
 `Zope Toolkit project <http://docs.zope.org/zopetoolkit/>`_.
 
-This package provides an implementation of browser resources, like
-files and directories. It also provides directives for defining
-those resources using ZCML.
-
-
-Resources
-=========
+This package provides an implementation of browser resources. It also
+provides directives for defining those resources using ZCML.
 
 Resources are static files and directories that are served to the browser
 directly from the filesystem. The most common example are images, CSS style
@@ -25,7 +20,7 @@ You can register a single file with the `<browser:resource>` directive, and a
 whole directory with the `<browser:resourceDirectory>` directive, for example
 
   <browser:resource
-    directory="/path/to/static.file"
+    file="/path/to/static.file"
     name="myfile"
     />
 
@@ -61,6 +56,5 @@ the name 'resource' that will be used to compute the base URLs for resources.
 
 For example, if you register 'http://static.example.com/' as the base 'resource'
 URL, the resources from the above example would yield the following absolute
-URLs: http://static.example.com/myfile and
-http://static.example.com/main-images
-(XXX what about http://static.example.com/main-images/subdir/sample.jpg?)
+URLs: http://static.example.com/@@/myfile and
+http://static.example.com/@@/main-images
