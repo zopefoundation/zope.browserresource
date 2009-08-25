@@ -15,7 +15,9 @@
 
 $Id$
 """
-from zope.traversing.namespace import getResource
+from zope.component import getAdapter
+from zope.location import locate
+from zope.site.hooks import getSite
 
 class IconView(object):
 
@@ -32,9 +34,8 @@ class IconView(object):
                 % (self.url(), self.alt, self.width, self.height))
 
     def url(self):
-        # The context is important here, since it becomes the parent of the
-        # icon, which is needed to generate the absolute URL.
-        resource = getResource(self.context, self.rname, self.request)
+        resource = getAdapter(self.request, name=self.rname)
+        locate(resource, getSite(), self.rname)
         return resource()
 
 class IconViewFactory(object):
