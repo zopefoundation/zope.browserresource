@@ -216,9 +216,7 @@ def setCacheControl(response, secs=86400):
     # Cache for one day by default
     response.setHeader('Cache-Control', 'public,max-age=%s' % secs)
     t = time.time() + secs
-    response.setHeader('Expires',
-                       time.strftime("%a, %d %b %Y %H:%M:%S GMT",
-                                     time.gmtime(t)))
+    response.setHeader('Expires', formatdate(t, usegmt=True))
 
 
 class FileResourceFactory(object):
