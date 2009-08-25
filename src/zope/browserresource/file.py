@@ -19,12 +19,11 @@ $Id$
 import os
 import time
 try:
-    from email.utils import formatdate
+    from email.utils import formatdate, parsedate_tz, mktime_tz
 except ImportError: # python 2.4
-    from email.Utils import formatdate
+    from email.Utils import formatdate, parsedate_tz, mktime_tz
 
 from zope.contenttype import guess_content_type
-from zope.datetime import time as timeFromDateTimeString
 from zope.interface import implements, classProvides
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
@@ -136,7 +135,7 @@ class FileResource(BrowserView, Resource):
             # understand the screwy date string as a lucky side effect
             # of the way they parse it).
             try:
-                mod_since = long(timeFromDateTimeString(header))
+                mod_since = long(mktime_tz(parsedate_tz(header)))
             except:
                 mod_since = None
             if mod_since is not None:
