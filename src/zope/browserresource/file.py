@@ -113,6 +113,35 @@ class FileResource(BrowserView, Resource):
           True
           >>> request.response.getHeader('Content-Type') == 'text/plain'
           True
+        
+        Let's test If-Modified-Since header support.
+
+          >>> timestamp = time.time()
+        
+          >>> file = factory._FileResourceFactory__file # get mangled file
+          >>> file.lmt = timestamp
+          >>> file.lmh = formatdate(timestamp, usegmt=True)
+
+          >>> before = timestamp - 1000
+          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True))
+          >>> resource = factory(request)
+          >>> bool(resource.GET())
+          True
+
+          >>> after = timestamp + 1000
+          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
+          >>> resource = factory(request)
+          >>> bool(resource.GET())
+          False
+          >>> request.response.getStatus()
+          304
+
+        It won't fail on bad If-Modified-Since headers.
+
+          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE='bad header')
+          >>> resource = factory(request)
+          >>> bool(resource.GET())
+          True
 
         '''
 
@@ -142,7 +171,7 @@ class FileResource(BrowserView, Resource):
                 if getattr(file, 'lmt', None):
                     last_mod = long(file.lmt)
                 else:
-                    last_mod = long(0)
+                    last_mod = 0L
                 if last_mod > 0 and last_mod <= mod_since:
                     response.setStatus(304)
                     return ''

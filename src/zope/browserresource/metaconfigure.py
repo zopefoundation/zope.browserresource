@@ -220,7 +220,7 @@ class I18nResource(object):
         if self.name is None:
             return
 
-        if not self.__data.has_key(self.defaultLanguage):
+        if self.defaultLanguage not in self.__data:
             raise ConfigurationError(
                 "A translation for the default language (%s) "
                 "must be specified" % self.defaultLanguage

@@ -57,6 +57,9 @@ class Test(cleanup.CleanUp, TestII18nAware):
                                TestRequest(), 'fr')
         return obj
 
+    def test_setDefaultLanguage(self):
+        ob = self._createObject()
+        self.assertRaises(ValueError, ob.setDefaultLanguage, 'ru')
 
     def _createDict(self, filename1='test.pt', filename2='test2.pt'):
         path1 = os.path.join(test_directory, 'testfiles', filename1)

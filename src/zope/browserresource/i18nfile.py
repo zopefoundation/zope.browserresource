@@ -51,7 +51,7 @@ class I18nFileResource(FileResource):
 
     def setDefaultLanguage(self, language):
         'See II18nAware'
-        if not self._data.has_key(language):
+        if language not in self._data:
             raise ValueError(
                   'cannot set nonexistent language (%s) as default' % language)
         self.defaultLanguage = language
