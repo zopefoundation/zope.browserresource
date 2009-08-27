@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Browser configuration code
+"""ZCML directive handlers for browser resources
 
 $Id$
 """

@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Resource
+"""Resource interfaces
 
 $Id$
 """
