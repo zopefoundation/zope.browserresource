@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Browser Resource
+"""Resource base class and AbsoluteURL adapter
 
 $Id$
 """

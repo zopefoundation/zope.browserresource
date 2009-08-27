@@ -11,9 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Browser configuration code
-
-This module defines the schemas for browser directives.
+"""ZCML directives for defining browser resources
 
 $Id$
 """
