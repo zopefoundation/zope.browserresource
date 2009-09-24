@@ -16,6 +16,8 @@
 $Id$
 """
 import os
+import tempfile
+import shutil
 from unittest import TestCase, main, makeSuite
 
 from zope.publisher.interfaces import NotFound
@@ -80,6 +82,27 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         resource = factory(request)
         self.assertRaises(KeyError, resource.__getitem__, 'doesnotexist')
         file = resource['test.txt']
+
+    def testForbiddenNames(self):
+        request = TestRequest()
+        old_forbidden_names = DirectoryResource.forbidden_names
+        path = tempfile.mkdtemp()
+        try:
+            os.mkdir(os.path.join(path, '.svn'))
+            open(os.path.join(path, 'test.txt'), 'w').write('')
+
+            factory = DirectoryResourceFactory(path, checker, 'testfiles')
+            resource = factory(request)
+
+            self.assertEquals(resource.get('.svn', None), None)
+            self.assertNotEquals(resource.get('test.txt', None), None)
+
+            DirectoryResource.forbidden_names = ('*.txt', )
+            self.assertEquals(resource.get('test.txt', None), None)
+            self.assertNotEquals(resource.get('.svn', None), None)
+        finally:
+            shutil.rmtree(path)
+            DirectoryResource.forbidden_names = old_forbidden_names
 
     def testProxy(self):
         path = os.path.join(test_directory, 'testfiles')

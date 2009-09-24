@@ -23,6 +23,7 @@ resource directory from the name of the file within the directory.
 
 $Id$
 """
+import fnmatch
 import os
 
 from zope.component import queryUtility
@@ -55,6 +56,7 @@ class DirectoryResource(BrowserView, Resource):
 
     default_factory = FileResourceFactory
     directory_factory = None # this will be assigned later in the module
+    forbidden_names = ('.svn', )
 
     def publishTraverse(self, request, name):
         '''See interface IBrowserPublisher'''
@@ -71,6 +73,14 @@ class DirectoryResource(BrowserView, Resource):
         return res
 
     def get(self, name, default=_marker):
+
+        for pat in self.forbidden_names:
+            if fnmatch.fnmatch(name, pat):
+                if default is _marker:
+                    raise NotFound(None, name)
+                else:
+                    return default
+        
         path = self.context.path
         filename = os.path.join(path, name)
         isfile = os.path.isfile(filename)
