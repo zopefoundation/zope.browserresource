@@ -2,7 +2,12 @@
 CHANGES
 =======
 
-3.10.0 (unreleased)
+3.10.1 (unreleased)
+===================
+
+- ...
+
+3.10.0 (2009-09-25)
 ===================
 
 - Add an ability to forbid publishing of some files in the resource directory,
