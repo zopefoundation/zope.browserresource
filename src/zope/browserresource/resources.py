@@ -25,7 +25,7 @@ from zope.publisher.interfaces.browser import IBrowserPublisher
 class Resources(BrowserView):
     """A view that can be traversed further to access browser resources
     
-    This view is usually registered for zope.location.interfaces.ISite objects
+    This view is usually registered for zope.component.interfaces.ISite objects
     with no name, so resources will be available at <site>/@@/<resource>.
 
     Let's test how it's traversed to get registered resources. Let's create

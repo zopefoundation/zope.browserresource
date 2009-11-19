@@ -3,7 +3,7 @@
   <adapter factory=".resource.AbsoluteURL" />
   
   <view
-      for="zope.location.interfaces.ISite"
+      for="zope.component.interfaces.ISite"
       type="zope.publisher.interfaces.browser.IDefaultBrowserLayer"
       name=""
       factory=".resources.Resources"

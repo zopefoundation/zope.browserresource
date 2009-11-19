@@ -5,7 +5,11 @@ CHANGES
 3.10.1 (unreleased)
 ===================
 
-- ...
+- Import hooks functionality from zope.component after it was moved there from
+  zope.site. This lifts the dependency on zope.site and thereby, ZODB.
+
+- Import ISite and IPossibleSite from zope.component after they were moved
+  there from zope.location.
 
 3.10.0 (2009-09-25)
 ===================

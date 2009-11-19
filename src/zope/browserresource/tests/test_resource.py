@@ -21,7 +21,7 @@ from zope import component
 
 from zope.publisher.browser import TestRequest
 
-import zope.location.interfaces
+import zope.component.interfaces
 from zope.browserresource.resource import Resource
 from zope.browserresource.tests import support
 from zope.traversing.browser.interfaces import IAbsoluteURL
@@ -60,7 +60,7 @@ class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
             return 'http://cdn.example.com'
         component.provideAdapter(
             resourceBase,
-            (zope.location.interfaces.ISite, TestRequest),
+            (zope.component.interfaces.ISite, TestRequest),
             IAbsoluteURL, 'resource')
 
         req = TestRequest()

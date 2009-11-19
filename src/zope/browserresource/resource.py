@@ -15,11 +15,11 @@
 
 $Id$
 """
+import zope.component.hooks
 from zope.component import adapts, getMultiAdapter, queryMultiAdapter
 from zope.interface import implements, implementsOnly
 from zope.location import Location
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.site.hooks import getSite
 from zope.traversing.browser.interfaces import IAbsoluteURL
 import zope.traversing.browser.absoluteurl
 
@@ -54,7 +54,7 @@ class AbsoluteURL(zope.traversing.browser.absoluteurl.AbsoluteURL):
         if name.startswith('++resource++'):
             name = name[12:]
 
-        site = getSite()
+        site = zope.component.hooks.getSite()
         base = queryMultiAdapter((site, self.request), IAbsoluteURL,
             name="resource")
         if base is None:

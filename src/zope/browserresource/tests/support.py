@@ -17,16 +17,16 @@ $Id$
 """
 
 import zope.component
-import zope.location.interfaces
+import zope.component.hooks
+import zope.component.interfaces
 from zope.interface import implements
 from zope.traversing.interfaces import IContainmentRoot
 
-from zope.site.hooks import setSite
 import zope.browserresource.resource
 
 class Site:
 
-    implements(zope.location.interfaces.ISite, IContainmentRoot)
+    implements(zope.component.interfaces.ISite, IContainmentRoot)
 
     def getSiteManager(self):
         return zope.component.getGlobalSiteManager()
@@ -38,10 +38,10 @@ class SiteHandler(object):
 
     def setUp(self):
         super(SiteHandler, self).setUp()
-        setSite(site)
+        zope.component.hooks.setSite(site)
         zope.component.provideAdapter(
             zope.browserresource.resource.AbsoluteURL)
 
     def tearDown(self):
-        setSite()
+        zope.component.hooks.setSite()
         super(SiteHandler, self).tearDown()

@@ -15,9 +15,10 @@
 
 $Id$
 """
+import zope.component.hooks
 from zope.component import getAdapter
 from zope.location import locate
-from zope.site.hooks import getSite
+
 
 class IconView(object):
 
@@ -35,7 +36,7 @@ class IconView(object):
 
     def url(self):
         resource = getAdapter(self.request, name=self.rname)
-        locate(resource, getSite(), self.rname)
+        locate(resource, zope.component.hooks.getSite(), self.rname)
         return resource()
 
 class IconViewFactory(object):
