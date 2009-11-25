@@ -2,10 +2,10 @@
 CHANGES
 =======
 
-3.10.2 (unreleased)
+3.10.2 (2009-11-25)
 ===================
 
-- Nothing changed yet.
+- The previous release had a broken egg, sorry.
 
 
 3.10.1 (2009-11-24)
