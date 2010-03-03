@@ -13,7 +13,7 @@
 ##############################################################################
 """zope.browserresource setup
 """
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, find_packages
 
 long_description = (open('README.txt').read() + '\n\n' +
                     open('CHANGES.txt').read())
