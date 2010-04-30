@@ -15,8 +15,10 @@
 
 $Id$
 """
+
+import doctest
 import unittest
-from zope.testing import cleanup, doctest
+from zope.testing import cleanup
 
 def setUp(test):
     cleanup.setUp()

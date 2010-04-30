@@ -15,9 +15,11 @@
 
 $Id$
 """
+
+import doctest
 import os
 import unittest
-from zope.testing import cleanup, doctest
+from zope.testing import cleanup
 
 from zope.publisher.browser import TestRequest
 from zope.security.checker import NamesChecker
