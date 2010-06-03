@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Test Icon-Directive
-
-$Id$
 """
 import os
 from StringIO import StringIO

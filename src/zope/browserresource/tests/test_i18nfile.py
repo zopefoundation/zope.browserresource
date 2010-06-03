@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """I18n File-Resource Tests
-
-$Id$
 """
 from unittest import main, makeSuite
 import os

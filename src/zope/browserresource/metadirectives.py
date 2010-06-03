@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """ZCML directives for defining browser resources
-
-$Id$
 """
 from zope.configuration.fields import GlobalObject, GlobalInterface
 from zope.configuration.fields import Path, MessageID

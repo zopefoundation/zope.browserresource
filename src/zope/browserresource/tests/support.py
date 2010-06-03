@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Support for tests that need a simple site to be provided.
-
-$Id$
 """
 
 import zope.component

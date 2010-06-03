@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Resource base class and AbsoluteURL adapter
-
-$Id$
 """
 import zope.component.hooks
 from zope.component import adapts, getMultiAdapter, queryMultiAdapter

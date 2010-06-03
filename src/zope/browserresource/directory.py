@@ -20,8 +20,6 @@ traversed to retrieve resources represented by contained files, which
 can in turn be treated as resources.  The contained files have
 __name__ values which include a '/' separating the __name__ of the
 resource directory from the name of the file within the directory.
-
-$Id$
 """
 import fnmatch
 import os

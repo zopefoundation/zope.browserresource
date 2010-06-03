@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Internationalized file resource.
-
-$Id$
 """
 from zope.i18n.interfaces import II18nAware
 from zope.i18n.negotiator import negotiator

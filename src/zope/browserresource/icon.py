@@ -12,8 +12,6 @@
 # 
 ##############################################################################
 """Icon support
-
-$Id$
 """
 import zope.component.hooks
 from zope.component import getAdapter

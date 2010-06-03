@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """ZCML directive handlers for browser resources
-
-$Id$
 """
 import os
 

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Resource URL access
-
-$Id$
 """
 from zope.component import queryAdapter
 from zope.interface import implements

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Directory-based resources test
-
-$Id$
 """
 import os
 import tempfile
