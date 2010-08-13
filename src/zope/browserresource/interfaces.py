@@ -23,22 +23,35 @@ class IResource(Interface):
     def __call__():
         """return the absolute URL of this resource."""
 
+class IFileResource(IResource):
+    pass
+
 class IResourceFactory(Interface):
-    
+
     def __call__(request):
         """Return an IResource object"""
 
 class IResourceFactoryFactory(Interface):
     """A factory for IResourceFactory objects
-    
+
     These factories are registered as named utilities that can be selected
     for creating resource factories in a pluggable way.
-    
+
     Resource directories and browser:resource directive use these utilities
     to choose what resource to create, depending on the file extension, so
     third-party packages could easily plug-in additional resource types.
-    
+
     """
-    
+
     def __call__(path, checker, name):
         """Return an IResourceFactory"""
+
+class IETag(Interface):
+    """An adapter for computing resource ETags."""
+
+    def __call__(mtime, content):
+        """Compute an ETag for a resource.
+
+        May return None to disable the ETag header.
+        """
+

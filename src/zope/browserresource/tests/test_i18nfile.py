@@ -18,14 +18,17 @@ import os
 
 from zope.publisher.interfaces import NotFound
 
-from zope.component import provideAdapter, provideUtility
+from zope.interface import implements
+from zope.component import provideAdapter, provideUtility, adapts
 from zope.testing import cleanup
 
 from zope.i18n.interfaces import IUserPreferredCharsets, IUserPreferredLanguages
 
 from zope.publisher.http import IHTTPRequest, HTTPCharsets
 from zope.publisher.browser import BrowserLanguages, TestRequest
+from zope.publisher.interfaces.browser import IBrowserRequest
 
+from zope.browserresource.interfaces import IFileResource, IETag
 from zope.browserresource.i18nfile import I18nFileResource
 from zope.browserresource.i18nfile import I18nFileResourceFactory
 from zope.browserresource.file import File
@@ -39,6 +42,17 @@ from zope.i18n.tests.testii18naware import TestII18nAware
 test_directory = os.path.dirname(p.__file__)
 
 
+class MyETag(object):
+    adapts(IFileResource, IBrowserRequest)
+    implements(IETag)
+
+    def __init__(self, context, request):
+        pass
+
+    def __call__(self, mtime, content):
+        return 'myetag'
+
+
 class Test(cleanup.CleanUp, TestII18nAware):
 
     def setUp(self):
@@ -48,7 +62,7 @@ class Test(cleanup.CleanUp, TestII18nAware):
         provideAdapter(BrowserLanguages, (IHTTPRequest,), IUserPreferredLanguages)
         # Setup the negotiator utility
         provideUtility(negotiator, INegotiator)
-
+        provideAdapter(MyETag)
 
     def _createObject(self):
         obj = I18nFileResource({'en':None, 'lt':None, 'fr':None},

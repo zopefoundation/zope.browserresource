@@ -24,11 +24,15 @@ except ImportError: # python 2.4
 
 from zope.contenttype import guess_content_type
 from zope.interface import implements, classProvides
+from zope.component import adapts, getMultiAdapter
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IBrowserPublisher
 
 from zope.browserresource.resource import Resource
+from zope.browserresource.interfaces import IETag
+from zope.browserresource.interfaces import IFileResource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
 
@@ -116,18 +120,17 @@ class File(object):
         self.path = path
         self.__name__ = name
         f = open(path, 'rb')
-        data = f.read()
+        self.data = f.read()
         f.close()
-        self.content_type = guess_content_type(path, data)[0]
+        self.content_type = guess_content_type(path, self.data)[0]
 
         self.lmt = float(os.path.getmtime(path)) or time.time()
         self.lmh = formatdate(self.lmt, usegmt=True)
-        self.etag = '%s-%s' % (self.lmt, len(data))
 
 
 class FileResource(BrowserView, Resource):
 
-    implements(IBrowserPublisher)
+    implements(IFileResource, IBrowserPublisher)
 
     cacheTimeout = 86400
 
@@ -185,7 +188,7 @@ class FileResource(BrowserView, Resource):
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
-          >>> resource.GET() ==  open(testFilePath, 'rb').read()
+          >>> resource.GET() == open(testFilePath, 'rb').read()
           True
           >>> request.response.getHeader('Content-Type') == 'text/plain'
           True
@@ -195,6 +198,8 @@ class FileResource(BrowserView, Resource):
         file = self.chooseContext()
         request = self.request
         response = request.response
+
+        etag = getMultiAdapter((self, request), IETag)(file.lmt, file.data)
 
         setCacheControl(response, self.cacheTimeout)
 
@@ -229,15 +234,14 @@ class FileResource(BrowserView, Resource):
         header = request.getHeader('If-None-Match', None)
         if header is not None:
             can_return_304 = True
-            etag = getattr(file, 'etag', None)
             tags = parse_etags(header)
             if not etag or not etag_matches(quote_etag(etag), tags):
                 all_cache_checks_passed = False
 
         # 304 responses MUST contain ETag, if one would've been sent with
         # a 200 response
-        if file.etag:
-            response.setHeader('ETag', quote_etag(file.etag))
+        if etag:
+            response.setHeader('ETag', quote_etag(etag))
 
         if can_return_304 and all_cache_checks_passed:
             response.setStatus(304)
@@ -250,11 +254,7 @@ class FileResource(BrowserView, Resource):
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
 
-        f = open(file.path,'rb')
-        data = f.read()
-        f.close()
-
-        return data
+        return file.data
 
     def HEAD(self):
         '''Return proper headers and no content for HEAD requests
@@ -269,11 +269,12 @@ class FileResource(BrowserView, Resource):
 
         '''
         file = self.chooseContext()
+        etag = getMultiAdapter((self, self.request), IETag)(file.lmt, file.data)
         response = self.request.response
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
-        if file.etag:
-            response.setHeader('ETag', file.etag)
+        if etag:
+            response.setHeader('ETag', etag)
         setCacheControl(response, self.cacheTimeout)
         return ''
 
@@ -283,6 +284,19 @@ class FileResource(BrowserView, Resource):
         data = f.read()
         f.close()
         return data
+
+
+class FileETag(object):
+
+    adapts(IFileResource, IBrowserRequest)
+    implements(IETag)
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, mtime, content):
+        return '%s-%s' % (mtime, len(content))
 
 
 def setCacheControl(response, secs=86400):

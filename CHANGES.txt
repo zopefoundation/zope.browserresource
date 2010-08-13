@@ -5,7 +5,9 @@ CHANGES
 3.11.0 (unreleased)
 ===================
 
-- Support the HTTP Etag header for file resources.
+- Support the HTTP ETag header for file resources.  ETag generation can be
+  customized or disabled by providing an IETag multi-adapter on
+  (IFileResource, your-application-skin).
 
 3.10.3 (2010-04-30)
 ===================

@@ -25,9 +25,36 @@ except ImportError: # python 2.4
 
 from zope.testing import cleanup
 from zope.publisher.browser import TestRequest
+from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
+from zope.component import provideAdapter, adapts
+from zope.interface import implements
+from zope.interface.verify import verifyObject
 
-from zope.browserresource.file import FileResourceFactory
+from zope.browserresource.file import FileResourceFactory, FileETag
+from zope.browserresource.interfaces import IFileResource, IETag
+
+
+class MyETag(object):
+    adapts(IFileResource, IBrowserRequest)
+    implements(IETag)
+
+    def __init__(self, context, request):
+        pass
+
+    def __call__(self, mtime, content):
+        return 'myetag'
+
+
+class NoETag(object):
+    adapts(IFileResource, IBrowserRequest)
+    implements(IETag)
+
+    def __init__(self, context, request):
+        pass
+
+    def __call__(self, mtime, content):
+        return None
 
 
 def setUp(test):
@@ -37,10 +64,26 @@ def setUp(test):
     test.globs['testFilePath'] = os.path.join(data_dir, 'test.txt')
     test.globs['nullChecker'] = NamesChecker()
     test.globs['TestRequest'] = TestRequest
+    provideAdapter(MyETag)
 
 
 def tearDown(test):
     cleanup.tearDown()
+
+
+def doctest_FileETag():
+    """Tests for FileETag
+
+        >>> etag_maker = FileETag(object(), TestRequest())
+        >>> verifyObject(IETag, etag_maker)
+        True
+
+    By default we constuct an ETag from the file's mtime and size
+
+        >>> etag_maker(1234, 'abc')
+        '1234-3'
+
+    """
 
 
 def doctest_FileResource_GET_sets_cache_headers():
@@ -53,7 +96,6 @@ def doctest_FileResource_GET_sets_cache_headers():
         >>> file = factory._FileResourceFactory__file # get mangled file
         >>> file.lmt = timestamp
         >>> file.lmh = formatdate(timestamp, usegmt=True)
-        >>> file.etag = 'myetag'
 
         >>> request = TestRequest()
         >>> resource = factory(request)
@@ -82,7 +124,6 @@ def doctest_FileResource_GET_if_modified_since():
         >>> file = factory._FileResourceFactory__file # get mangled file
         >>> file.lmt = timestamp
         >>> file.lmh = formatdate(timestamp, usegmt=True)
-        >>> file.etag = 'myetag'
 
         >>> before = timestamp - 1000
         >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True))
@@ -141,7 +182,6 @@ def doctest_FileResource_GET_if_none_match():
         >>> file = factory._FileResourceFactory__file # get mangled file
         >>> file.lmt = timestamp
         >>> file.lmh = formatdate(timestamp, usegmt=True)
-        >>> file.etag = 'myetag'
 
         >>> request = TestRequest(HTTP_IF_NONE_MATCH='"othertag"')
         >>> resource = factory(request)
@@ -178,7 +218,7 @@ def doctest_FileResource_GET_if_none_match():
 
     it also won't fail if we don't have an etag for the resource
 
-        >>> file.etag = None
+        >>> provideAdapter(NoETag)
         >>> request = TestRequest(HTTP_IF_NONE_MATCH='"someetag"')
         >>> resource = factory(request)
         >>> bool(resource.GET())
@@ -197,7 +237,6 @@ def doctest_FileResource_GET_if_none_match_and_if_modified_since():
         >>> file = factory._FileResourceFactory__file # get mangled file
         >>> file.lmt = timestamp
         >>> file.lmh = formatdate(timestamp, usegmt=True)
-        >>> file.etag = 'myetag'
 
     We've a match
 
@@ -237,6 +276,7 @@ def doctest_FileResource_GET_if_none_match_and_if_modified_since():
         True
 
     """
+
 
 def test_suite():
     return unittest.TestSuite((
