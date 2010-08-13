@@ -16,6 +16,7 @@
 
 import os
 import time
+import re
 try:
     from email.utils import formatdate, parsedate_tz, mktime_tz
 except ImportError: # python 2.4
@@ -23,25 +24,105 @@ except ImportError: # python 2.4
 
 from zope.contenttype import guess_content_type
 from zope.interface import implements, classProvides
+from zope.component import adapts, getMultiAdapter
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IBrowserPublisher
 
 from zope.browserresource.resource import Resource
+from zope.browserresource.interfaces import IETag
+from zope.browserresource.interfaces import IFileResource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
 
 
+ETAG_RX = re.compile(r'[*]|(?:W/)?"(?:[^"\\]|[\\].)*"')
+
+
+def parse_etags(value):
+    r"""Parse a list of entity tags.
+
+    HTTP/1.1 specifies the following syntax for If-Match/If-None-Match
+    headers::
+
+        If-Match = "If-Match" ":" ( "*" | 1#entity-tag )
+        If-None-Match = "If-None-Match" ":" ( "*" | 1#entity-tag )
+
+        entity-tag = [ weak ] opaque-tag
+
+        weak       = "W/"
+        opaque-tag = quoted-string
+
+        quoted-string  = ( <"> *(qdtext) <"> )
+        qdtext         = <any TEXT except <">>
+
+        The backslash character ("\") may be used as a single-character
+        quoting mechanism only within quoted-string and comment constructs.
+
+    Examples:
+
+        >>> parse_etags('*')
+        ['*']
+
+        >>> parse_etags(r' "qwerty", ,"foo",W/"bar" , "baz","\""')
+        ['"qwerty"', '"foo"', 'W/"bar"', '"baz"', '"\\""']
+
+    Ill-formed headers are ignored
+
+        >>> parse_etags("not an etag at all")
+        []
+
+    """
+    return ETAG_RX.findall(value)
+
+
+def etag_matches(etag, tags):
+    """Check if the entity tag matches any of the given tags.
+
+        >>> etag_matches('"xyzzy"', ['"abc"', '"xyzzy"', 'W/"woof"'])
+        True
+
+        >>> etag_matches('"woof"', ['"abc"', 'W/"woof"'])
+        False
+
+        >>> etag_matches('"xyzzy"', ['*'])
+        True
+
+    Note that you pass quoted etags in both arguments!
+    """
+    for tag in tags:
+        if tag == etag or tag == '*':
+            return True
+    return False
+
+
+def quote_etag(etag):
+    r"""Quote an etag value
+
+        >>> quote_etag("foo")
+        '"foo"'
+
+    Special characters are escaped
+
+        >>> quote_etag('"')
+        '"\\""'
+        >>> quote_etag('\\')
+        '"\\\\"'
+
+    """
+    return '"%s"' % etag.replace('\\', '\\\\').replace('"', '\\"')
+
+
 class File(object):
-    
+
     def __init__(self, path, name):
         self.path = path
         self.__name__ = name
-
         f = open(path, 'rb')
-        data = f.read()
+        self.data = f.read()
         f.close()
-        self.content_type = guess_content_type(path, data)[0]
+        self.content_type = guess_content_type(path, self.data)[0]
 
         self.lmt = float(os.path.getmtime(path)) or time.time()
         self.lmh = formatdate(self.lmt, usegmt=True)
@@ -49,14 +130,14 @@ class File(object):
 
 class FileResource(BrowserView, Resource):
 
-    implements(IBrowserPublisher)
+    implements(IFileResource, IBrowserPublisher)
 
     cacheTimeout = 86400
 
     def publishTraverse(self, request, name):
         '''File resources can't be traversed further, so raise NotFound if
         someone tries to traverse it.
-        
+
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
@@ -87,58 +168,29 @@ class FileResource(BrowserView, Resource):
           True
           >>> next == ()
           True
-        
+
         '''
         return getattr(self, request.method), ()
 
     def chooseContext(self):
         '''Choose the appropriate context.
-        
+
         This method can be overriden in subclasses, that need to choose
         appropriate file, based on current request or other condition,
         like, for example, i18n files.
-        
+
         '''
         return self.context
 
     def GET(self):
         '''Return a file data for downloading with GET requests
-        
+
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
-          >>> resource.GET() ==  open(testFilePath, 'rb').read()
+          >>> resource.GET() == open(testFilePath, 'rb').read()
           True
           >>> request.response.getHeader('Content-Type') == 'text/plain'
-          True
-        
-        Let's test If-Modified-Since header support.
-
-          >>> timestamp = time.time()
-        
-          >>> file = factory._FileResourceFactory__file # get mangled file
-          >>> file.lmt = timestamp
-          >>> file.lmh = formatdate(timestamp, usegmt=True)
-
-          >>> before = timestamp - 1000
-          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True))
-          >>> resource = factory(request)
-          >>> bool(resource.GET())
-          True
-
-          >>> after = timestamp + 1000
-          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
-          >>> resource = factory(request)
-          >>> bool(resource.GET())
-          False
-          >>> request.response.getStatus()
-          304
-
-        It won't fail on bad If-Modified-Since headers.
-
-          >>> request = TestRequest(HTTP_IF_MODIFIED_SINCE='bad header')
-          >>> resource = factory(request)
-          >>> bool(resource.GET())
           True
 
         '''
@@ -147,13 +199,19 @@ class FileResource(BrowserView, Resource):
         request = self.request
         response = request.response
 
+        etag = getMultiAdapter((self, request), IETag)(file.lmt, file.data)
+
         setCacheControl(response, self.cacheTimeout)
+
+        can_return_304 = False
+        all_cache_checks_passed = True
 
         # HTTP If-Modified-Since header handling. This is duplicated
         # from OFS.Image.Image - it really should be consolidated
         # somewhere...
         header = request.getHeader('If-Modified-Since', None)
         if header is not None:
+            can_return_304 = True
             header = header.split(';')[0]
             # Some proxies seem to send invalid date strings for this
             # header. If the date string is not valid, we ignore it
@@ -165,27 +223,42 @@ class FileResource(BrowserView, Resource):
                 mod_since = long(mktime_tz(parsedate_tz(header)))
             except:
                 mod_since = None
-            if mod_since is not None:
-                if getattr(file, 'lmt', None):
-                    last_mod = long(file.lmt)
-                else:
-                    last_mod = 0L
-                if last_mod > 0 and last_mod <= mod_since:
-                    response.setStatus(304)
-                    return ''
+            if getattr(file, 'lmt', None):
+                last_mod = long(file.lmt)
+            else:
+                last_mod = 0L
+            if mod_since is None or last_mod <= 0 or last_mod > mod_since:
+                all_cache_checks_passed = False
 
+        # HTTP If-None-Match header handling
+        header = request.getHeader('If-None-Match', None)
+        if header is not None:
+            can_return_304 = True
+            tags = parse_etags(header)
+            if not etag or not etag_matches(quote_etag(etag), tags):
+                all_cache_checks_passed = False
+
+        # 304 responses MUST contain ETag, if one would've been sent with
+        # a 200 response
+        if etag:
+            response.setHeader('ETag', quote_etag(etag))
+
+        if can_return_304 and all_cache_checks_passed:
+            response.setStatus(304)
+            return ''
+
+        # 304 responses SHOULD NOT or MUST NOT include other entity headers,
+        # depending on whether the conditional GET used a strong or a weak
+        # validator.  We only use strong validators, which makes it SHOULD
+        # NOT.
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
 
-        f = open(file.path,'rb')
-        data = f.read()
-        f.close()
-
-        return data
+        return file.data
 
     def HEAD(self):
         '''Return proper headers and no content for HEAD requests
-        
+
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
@@ -196,9 +269,12 @@ class FileResource(BrowserView, Resource):
 
         '''
         file = self.chooseContext()
+        etag = getMultiAdapter((self, self.request), IETag)(file.lmt, file.data)
         response = self.request.response
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
+        if etag:
+            response.setHeader('ETag', etag)
         setCacheControl(response, self.cacheTimeout)
         return ''
 
@@ -208,6 +284,19 @@ class FileResource(BrowserView, Resource):
         data = f.read()
         f.close()
         return data
+
+
+class FileETag(object):
+
+    adapts(IFileResource, IBrowserRequest)
+    implements(IETag)
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, mtime, content):
+        return '%s-%s' % (mtime, len(content))
 
 
 def setCacheControl(response, secs=86400):
