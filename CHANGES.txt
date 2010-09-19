@@ -8,6 +8,7 @@ CHANGES
 - Added ``zcml`` extra dependencies and fixed dependencies of
   ``configure.zcml`` on other packages' ``meta.zcml``.
 
+- Added a test for including our own ``configure.zcml``.
 
 3.11.0 (2010-08-13)
 ===================
