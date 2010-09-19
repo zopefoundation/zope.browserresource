@@ -2,10 +2,11 @@
 CHANGES
 =======
 
-3.11.1 (unreleased)
+3.12 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Added ``zcml`` extra dependencies and fixed dependencies of
+  ``configure.zcml`` on other packages' ``meta.zcml``.
 
 
 3.11.0 (2010-08-13)

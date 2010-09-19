@@ -19,7 +19,7 @@ long_description = (open('README.txt').read() + '\n\n' +
                     open('CHANGES.txt').read())
 
 setup(name='zope.browserresource',
-      version = '3.11.1dev',
+      version = '3.12dev',
       url='http://pypi.python.org/pypi/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
@@ -52,6 +52,8 @@ setup(name='zope.browserresource',
                         ],
       extras_require={
           'test': ['zope.testing'],
+          'zcml': ['zope.component[zcml]',
+                   'zope.security[zcml]>=3.8.0dev'],
           },
 
       zip_safe = False,

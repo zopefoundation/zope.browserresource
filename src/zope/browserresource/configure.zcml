@@ -1,5 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
+  <include file="meta.zcml" package="zope.component" />
+  <include file="meta.zcml" package="zope.security" />
+
   <adapter factory=".resource.AbsoluteURL" />
   <adapter factory=".file.FileETag" />
 
