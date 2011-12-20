@@ -2,6 +2,12 @@
 CHANGES
 =======
 
+3.9.1 (2011-12-20)
+==================
+
+- Minor release tagging from an old tag to
+  get POST requests working by default
+
 3.9.0 (2009-08-27)
 ==================
 

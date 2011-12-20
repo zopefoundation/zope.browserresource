@@ -103,6 +103,10 @@ class FileResource(BrowserView, Resource):
         '''
         return self.context
 
+    def POST(self):
+        """ POST default """
+        return self.GET()
+
     def GET(self):
         '''Return a file data for downloading with GET requests
         

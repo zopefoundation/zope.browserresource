@@ -19,7 +19,7 @@ long_description = (open('README.txt').read() + '\n\n' +
                     open('CHANGES.txt').read())
 
 setup(name='zope.browserresource',
-      version = '3.9.0',
+      version = '3.9.1',
       url='http://pypi.python.org/pypi/zope.browserresource/',
       author='Zope Corporation and Contributors',
       author_email='zope-dev@zope.org',
