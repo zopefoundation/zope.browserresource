@@ -19,7 +19,7 @@ from zope.component import queryUtility
 from zope.component.interface import provideInterface
 from zope.component.zcml import handler
 from zope.configuration.exceptions import ConfigurationError
-from zope.interface import Interface, implements, classProvides
+from zope.interface import Interface, implementer, provider
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.security.checker import CheckerPublic, NamesChecker, Checker
@@ -35,10 +35,9 @@ from zope.browserresource.interfaces import IResourceFactoryFactory
 allowed_names = ('GET', 'HEAD', 'publishTraverse', 'browserDefault',
                  'request', '__call__')
 
+@implementer(IResourceFactory)
+@provider(IResourceFactoryFactory)
 class ResourceFactoryWrapper(object):
-
-    implements(IResourceFactory)
-    classProvides(IResourceFactoryFactory)
 
     def __init__(self, factory, checker, name):
         self.__factory = factory

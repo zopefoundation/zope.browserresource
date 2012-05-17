@@ -18,8 +18,8 @@ import os
 
 from zope.publisher.interfaces import NotFound
 
-from zope.interface import implements
-from zope.component import provideAdapter, provideUtility, adapts
+from zope.interface import implementer
+from zope.component import provideAdapter, provideUtility, adapter
 from zope.testing import cleanup
 
 from zope.i18n.interfaces import IUserPreferredCharsets, IUserPreferredLanguages
@@ -42,9 +42,9 @@ from zope.i18n.tests.testii18naware import TestII18nAware
 test_directory = os.path.dirname(p.__file__)
 
 
+@adapter(IFileResource, IBrowserRequest)
+@implementer(IETag)
 class MyETag(object):
-    adapts(IFileResource, IBrowserRequest)
-    implements(IETag)
 
     def __init__(self, context, request):
         pass

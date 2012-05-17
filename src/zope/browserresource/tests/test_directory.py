@@ -23,7 +23,7 @@ from zope.proxy import isProxy
 from zope.publisher.browser import TestRequest
 from zope.security import proxy
 from zope.security.checker import NamesChecker, ProxyFactory
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location.interfaces import IContained
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
@@ -43,8 +43,8 @@ checker = NamesChecker(
     ('get', '__getitem__', 'request', 'publishTraverse')
     )
 
+@implementer(IContained)
 class Ob(object):
-    implements(IContained)
     __parent__ = __name__ = None
 
 ob = Ob()

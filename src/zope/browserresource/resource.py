@@ -14,8 +14,8 @@
 """Resource base class and AbsoluteURL adapter
 """
 import zope.component.hooks
-from zope.component import adapts, getMultiAdapter, queryMultiAdapter
-from zope.interface import implements, implementsOnly
+from zope.component import adapter, getMultiAdapter, queryMultiAdapter
+from zope.interface import implementer, implementer_only
 from zope.location import Location
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.traversing.browser.interfaces import IAbsoluteURL
@@ -24,9 +24,8 @@ import zope.traversing.browser.absoluteurl
 from zope.browserresource.interfaces import IResource
 
 
+@implementer(IResource)
 class Resource(Location):
-
-    implements(IResource)
 
     def __init__(self, request):
         self.request = request
@@ -35,10 +34,9 @@ class Resource(Location):
         return str(getMultiAdapter((self, self.request), IAbsoluteURL))
 
 
+@implementer_only(IAbsoluteURL)
+@adapter(IResource, IBrowserRequest)
 class AbsoluteURL(zope.traversing.browser.absoluteurl.AbsoluteURL):
-
-    implementsOnly(IAbsoluteURL)
-    adapts(IResource, IBrowserRequest)
 
     def __init__(self, context, request):
         self.context = context

@@ -27,17 +27,17 @@ from zope.testing import cleanup
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
-from zope.component import provideAdapter, adapts
-from zope.interface import implements
+from zope.component import provideAdapter, adapter
+from zope.interface import implementer
 from zope.interface.verify import verifyObject
 
 from zope.browserresource.file import FileResourceFactory, FileETag
 from zope.browserresource.interfaces import IFileResource, IETag
 
 
+@adapter(IFileResource, IBrowserRequest)
+@implementer(IETag)
 class MyETag(object):
-    adapts(IFileResource, IBrowserRequest)
-    implements(IETag)
 
     def __init__(self, context, request):
         pass
@@ -46,9 +46,9 @@ class MyETag(object):
         return 'myetag'
 
 
+@adapter(IFileResource, IBrowserRequest)
+@implementer(IETag)
 class NoETag(object):
-    adapts(IFileResource, IBrowserRequest)
-    implements(IETag)
 
     def __init__(self, context, request):
         pass

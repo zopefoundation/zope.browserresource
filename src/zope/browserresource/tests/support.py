@@ -17,14 +17,13 @@
 import zope.component
 import zope.component.hooks
 import zope.component.interfaces
-from zope.interface import implements
+from zope.interface import implementer
 from zope.traversing.interfaces import IContainmentRoot
 
 import zope.browserresource.resource
 
+@implementer(zope.component.interfaces.ISite, IContainmentRoot)
 class Site:
-
-    implements(zope.component.interfaces.ISite, IContainmentRoot)
 
     def getSiteManager(self):
         return zope.component.getGlobalSiteManager()

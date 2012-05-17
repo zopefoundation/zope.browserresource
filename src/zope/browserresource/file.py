@@ -23,8 +23,8 @@ except ImportError: # python 2.4
     from email.Utils import formatdate, parsedate_tz, mktime_tz
 
 from zope.contenttype import guess_content_type
-from zope.interface import implements, classProvides
-from zope.component import adapts, getMultiAdapter
+from zope.interface import implementer, provider
+from zope.component import adapter, getMultiAdapter
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -128,9 +128,8 @@ class File(object):
         self.lmh = formatdate(self.lmt, usegmt=True)
 
 
+@implementer(IFileResource, IBrowserPublisher)
 class FileResource(BrowserView, Resource):
-
-    implements(IFileResource, IBrowserPublisher)
 
     cacheTimeout = 86400
 
@@ -286,10 +285,9 @@ class FileResource(BrowserView, Resource):
         return data
 
 
+@adapter(IFileResource, IBrowserRequest)
+@implementer(IETag)
 class FileETag(object):
-
-    adapts(IFileResource, IBrowserRequest)
-    implements(IETag)
 
     def __init__(self, context, request):
         self.context = context
@@ -306,12 +304,11 @@ def setCacheControl(response, secs=86400):
     response.setHeader('Expires', formatdate(t, usegmt=True))
 
 
+@implementer(IResourceFactory)
+@provider(IResourceFactoryFactory)
 class FileResourceFactory(object):
 
     resourceClass = FileResource
-
-    implements(IResourceFactory)
-    classProvides(IResourceFactoryFactory)
 
     def __init__(self, path, checker, name):
         self.__file = File(path, name)

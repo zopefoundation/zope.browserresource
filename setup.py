@@ -19,7 +19,7 @@ long_description = (open('README.txt').read() + '\n\n' +
                     open('CHANGES.txt').read())
 
 setup(name='zope.browserresource',
-      version = '3.12.1dev',
+      version = '4.0.0dev',
       url='http://pypi.python.org/pypi/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
@@ -27,6 +27,9 @@ setup(name='zope.browserresource',
                      'Intended Audience :: Developers',
                      'License :: OSI Approved :: Zope Public License',
                      'Programming Language :: Python',
+                     'Programming Language :: Python :: 2',
+                     'Programming Language :: Python :: 2.6',
+                     'Programming Language :: Python :: 2.7',
                      'Operating System :: OS Independent',
                      'Topic :: Internet :: WWW/HTTP',
                      'Framework :: Zope3',

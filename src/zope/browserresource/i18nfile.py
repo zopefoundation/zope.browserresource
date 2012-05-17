@@ -15,16 +15,15 @@
 """
 from zope.i18n.interfaces import II18nAware
 from zope.i18n.negotiator import negotiator
-from zope.interface import implements, classProvides
+from zope.interface import implementer, provider
 
 from zope.browserresource.file import FileResource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
 
 
+@implementer(II18nAware)
 class I18nFileResource(FileResource):
-
-    implements(II18nAware)
 
     def __init__(self, data, request, defaultLanguage='en'):
         """Creates an internationalized file resource.  data should be
@@ -67,10 +66,10 @@ class I18nFileResource(FileResource):
         return data
 
 
+@implementer(IResourceFactory)
+@provider(IResourceFactoryFactory)
 class I18nFileResourceFactory(object):
 
-    implements(IResourceFactory)
-    classProvides(IResourceFactoryFactory)
 
     def __init__(self, data, defaultLanguage):
         self.__data = data

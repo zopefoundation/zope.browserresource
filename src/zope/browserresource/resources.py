@@ -14,12 +14,14 @@
 """Resource URL access
 """
 from zope.component import queryAdapter
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location import locate
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserPublisher
 
+
+@implementer(IBrowserPublisher)
 class Resources(BrowserView):
     """A view that can be traversed further to access browser resources
     
@@ -90,9 +92,6 @@ class Resources(BrowserView):
       'http://localhost/testresource'
     
     """
-
-    implements(IBrowserPublisher)
-
     def publishTraverse(self, request, name):
         '''See zope.publisher.interfaces.browser.IBrowserPublisher interface'''
         resource = queryAdapter(request, name=name)

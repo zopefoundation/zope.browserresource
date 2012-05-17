@@ -20,7 +20,7 @@ from unittest import TestCase, main, makeSuite
 from zope import component
 from zope.configuration.exceptions import ConfigurationError
 from zope.configuration.xmlconfig import xmlconfig, XMLConfig
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import TestRequest
 from zope.security.checker import ProxyFactory, CheckerPublic
 from zope.security.interfaces import Forbidden
@@ -47,8 +47,9 @@ template = """<configure
 
 request = TestRequest()
 
+@implementer(IC)
 class Ob(object):
-    implements(IC)
+    pass
 
 ob = Ob()
 request._vh_root = support.site

@@ -25,7 +25,7 @@ import fnmatch
 import os
 
 from zope.component import queryUtility
-from zope.interface import implements, classProvides
+from zope.interface import implementer, provider
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserPublisher
@@ -48,9 +48,8 @@ class Directory(object):
         self.checker = checker
         self.__name__ = name
 
+@implementer(IBrowserPublisher)
 class DirectoryResource(BrowserView, Resource):
-
-    implements(IBrowserPublisher)
 
     default_factory = FileResourceFactory
     directory_factory = None # this will be assigned later in the module
@@ -102,10 +101,9 @@ class DirectoryResource(BrowserView, Resource):
         return resource
 
 
+@implementer(IResourceFactory)
+@provider(IResourceFactoryFactory)
 class DirectoryResourceFactory(object):
-
-    implements(IResourceFactory)
-    classProvides(IResourceFactoryFactory)
 
     factoryClass = DirectoryResource
 
