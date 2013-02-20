@@ -219,13 +219,13 @@ class FileResource(BrowserView, Resource):
             # understand the screwy date string as a lucky side effect
             # of the way they parse it).
             try:
-                mod_since = long(mktime_tz(parsedate_tz(header)))
-            except:
+                mod_since = int(mktime_tz(parsedate_tz(header)))
+            except (ValueError, TypeError):
                 mod_since = None
             if getattr(file, 'lmt', None):
-                last_mod = long(file.lmt)
+                last_mod = int(file.lmt)
             else:
-                last_mod = 0L
+                last_mod = 0
             if mod_since is None or last_mod <= 0 or last_mod > mod_since:
                 all_cache_checks_passed = False
 

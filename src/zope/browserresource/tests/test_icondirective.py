@@ -14,7 +14,10 @@
 """Test Icon-Directive
 """
 import os
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from unittest import TestCase, main, makeSuite
 
 from zope import component

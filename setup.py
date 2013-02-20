@@ -13,7 +13,25 @@
 ##############################################################################
 """zope.browserresource setup
 """
+import os
+import sys
 from setuptools import setup, find_packages
+
+
+def test_suite():
+    # use the zope.testrunner machinery to find all the
+    # test suites we've put under ourselves
+    from zope.testrunner.options import get_options
+    from zope.testrunner.find import find_suites
+    from unittest import TestSuite
+    here = os.path.abspath(os.path.dirname(sys.argv[0]))
+    args = sys.argv[:]
+    src = os.path.join(here, 'src')
+    defaults = ['--test-path', src]
+    options = get_options(args, defaults)
+    suites = list(find_suites(options))
+    return TestSuite(suites)
+
 
 long_description = (open('README.txt').read() + '\n\n' +
                     open('CHANGES.txt').read())
@@ -39,13 +57,14 @@ setup(name='zope.browserresource',
       license='ZPL 2.1',
       packages=find_packages('src'),
       package_dir={'': 'src'},
+      test_suite='__main__.test_suite',
 
       namespace_packages=['zope'],
       include_package_data=True,
       install_requires=['setuptools',
                         'zope.component>=3.8.0',
                         'zope.configuration',
-                        'zope.contenttype',
+                        'zope.contenttype>=4.0.1',
                         'zope.i18n',
                         'zope.interface',
                         'zope.location',

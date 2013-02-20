@@ -16,8 +16,10 @@
 
 import os
 import unittest
-from cStringIO import StringIO
-
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 from zope import component
 from zope.interface import Interface, implements, directlyProvides, providedBy
 

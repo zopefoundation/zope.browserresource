@@ -16,6 +16,7 @@
 
 import doctest
 import os
+import re
 import unittest
 import time
 try:
@@ -24,6 +25,7 @@ except ImportError: # python 2.4
     from email.Utils import formatdate, parsedate_tz, mktime_tz
 
 from zope.testing import cleanup
+from zope.testing.renormalizing import RENormalizing
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
@@ -279,10 +281,17 @@ def doctest_FileResource_GET_if_none_match_and_if_modified_since():
 
 
 def test_suite():
+    checker = RENormalizing([
+        # Python 3 includes module name in exceptions
+        (re.compile(r"zope.publisher.interfaces.NotFound"),
+         "NotFound"),
+    ])
+
     return unittest.TestSuite((
         doctest.DocTestSuite(
             'zope.browserresource.file',
             setUp=setUp, tearDown=tearDown,
+            checker=checker,
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
         doctest.DocTestSuite(
             setUp=setUp, tearDown=tearDown,
