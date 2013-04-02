@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-4.0.1 (unreleased)
+4.0.1 (2013-04-03)
 ==================
 
 - Fixed some Python 3 string vs bytes issues.
