@@ -132,7 +132,7 @@ class Test(cleanup.CleanUp, TestII18nAware):
         resource = I18nFileResourceFactory(self._createDict('test.txt'), 'en')\
                                           (TestRequest())
 
-        self.assertEqual(resource.HEAD(), '')
+        self.assertEqual(resource.HEAD(), b'')
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/plain')
@@ -142,7 +142,7 @@ class Test(cleanup.CleanUp, TestII18nAware):
                         self._createDict('test.txt'), 'en')\
                         (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
-        self.assertEqual(resource.HEAD(), '')
+        self.assertEqual(resource.HEAD(), b'')
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/plain')
@@ -152,7 +152,7 @@ class Test(cleanup.CleanUp, TestII18nAware):
                         self._createDict('test.pt', 'test2.pt'), 'en')\
                         (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
-        self.assertEqual(resource.HEAD(), '')
+        self.assertEqual(resource.HEAD(), b'')
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/html')

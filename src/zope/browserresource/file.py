@@ -163,7 +163,7 @@ class FileResource(BrowserView, Resource):
           >>> request = TestRequest(REQUEST_METHOD='HEAD')
           >>> resource = factory(request)
           >>> view, next = resource.browserDefault(request)
-          >>> view() == ''
+          >>> view() == b''
           True
           >>> next == ()
           True
@@ -244,7 +244,7 @@ class FileResource(BrowserView, Resource):
 
         if can_return_304 and all_cache_checks_passed:
             response.setStatus(304)
-            return ''
+            return b''
 
         # 304 responses SHOULD NOT or MUST NOT include other entity headers,
         # depending on whether the conditional GET used a strong or a weak
@@ -261,7 +261,7 @@ class FileResource(BrowserView, Resource):
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
-          >>> resource.HEAD() == ''
+          >>> resource.HEAD() == b''
           True
           >>> request.response.getHeader('Content-Type') == 'text/plain'
           True
@@ -275,7 +275,7 @@ class FileResource(BrowserView, Resource):
         if etag:
             response.setHeader('ETag', etag)
         setCacheControl(response, self.cacheTimeout)
-        return ''
+        return b''
 
     # for unit tests
     def _testData(self):

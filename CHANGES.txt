@@ -5,7 +5,7 @@ CHANGES
 4.0.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fixed some Python 3 string vs bytes issues.
 
 
 4.0.0 (2013-02-20)

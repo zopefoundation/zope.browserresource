@@ -76,7 +76,7 @@ class Resources(BrowserView):
     futher traversing steps.
     
       >>> view, path = resources.browserDefault(request)
-      >>> view() == ''
+      >>> view() == b''
       True
       >>> path == ()
       True
@@ -113,4 +113,4 @@ class Resources(BrowserView):
 
 
 def empty():
-    return ''
+    return b''
