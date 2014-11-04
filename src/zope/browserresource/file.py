@@ -24,7 +24,7 @@ except ImportError: # python 2.4
 
 from zope.contenttype import guess_content_type
 from zope.interface import implementer, provider
-from zope.component import adapter, getMultiAdapter
+from zope.component import adapter, queryMultiAdapter
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -198,7 +198,7 @@ class FileResource(BrowserView, Resource):
         request = self.request
         response = request.response
 
-        etag = getMultiAdapter((self, request), IETag)(file.lmt, file.data)
+        etag = self._makeETag(file)
 
         setCacheControl(response, self.cacheTimeout)
 
@@ -268,7 +268,7 @@ class FileResource(BrowserView, Resource):
 
         '''
         file = self.chooseContext()
-        etag = getMultiAdapter((self, self.request), IETag)(file.lmt, file.data)
+        etag = self._makeETag(file)
         response = self.request.response
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
@@ -277,6 +277,12 @@ class FileResource(BrowserView, Resource):
         setCacheControl(response, self.cacheTimeout)
         return b''
 
+    def _makeETag(self, file_):
+        etag_adapter = queryMultiAdapter((self, self.request), IETag)
+        if etag_adapter is None:
+            return None
+        return etag_adapter(file_.lmt, file_.data)
+    
     # for unit tests
     def _testData(self):
         f = open(self.context.path, 'rb')

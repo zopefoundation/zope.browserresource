@@ -29,7 +29,7 @@ from zope.testing.renormalizing import RENormalizing
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
-from zope.component import provideAdapter, adapter
+from zope.component import provideAdapter, adapter, getGlobalSiteManager
 from zope.interface import implementer
 from zope.interface.verify import verifyObject
 
@@ -278,6 +278,22 @@ def doctest_FileResource_GET_if_none_match_and_if_modified_since():
         True
 
     """
+
+
+def doctest_FileResource_GET_works_without_IETag_adapter():
+    """Test backwards compatibility with users of <3.11 that do not provide an ETagAdatper
+
+        >>> getGlobalSiteManager().unregisterAdapter(MyETag)
+        True
+        >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+        >>> request = TestRequest()
+        >>> resource = factory(request)
+        >>> bool(resource.GET())
+        True
+        >>> request.response.getHeader('ETag') is None
+        True
+    """
+
 
 
 def test_suite():
