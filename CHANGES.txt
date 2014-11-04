@@ -5,7 +5,8 @@ CHANGES
 4.0.2 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Return no ETag if no adapter is registered, disabling the
+  requirement for applications that was introduced in 3.11.0 (GitHub #1)
 
 
 4.0.1 (2013-04-03)
