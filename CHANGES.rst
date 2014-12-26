@@ -1,11 +1,15 @@
-=======
-CHANGES
+Changes
 =======
 
-4.0.3 (unreleased)
+4.1.0 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Add support for PyPy.  PyPy3 support awaits release of fix for:
+  https://bitbucket.org/pypy/pypy/issue/1946
+
+- Add support for Python 3.4.
+
+- Add support for testing on Travis.
 
 
 4.0.2 (2014-11-04)
@@ -18,36 +22,36 @@ CHANGES
 4.0.1 (2013-04-03)
 ==================
 
-- Fixed some Python 3 string vs bytes issues.
+- Fix some Python 3 string vs bytes issues.
 
 
 4.0.0 (2013-02-20)
 ==================
 
-- Replaced deprecated ``zope.component.adapts`` usage with equivalent
+- Replace deprecated ``zope.component.adapts`` usage with equivalent
   ``zope.component.adapter`` decorator.
 
-- Replaced deprecated ``zope.interface.classProvides`` usage with equivalent
+- Replace deprecated ``zope.interface.classProvides`` usage with equivalent
   ``zope.interface.provider`` decorator.
 
-- Replaced deprecated ``zope.interface.implementsOnly`` usage with equivalent
+- Replace deprecated ``zope.interface.implementsOnly`` usage with equivalent
   ``zope.interface.implementer_only`` decorator.
 
-- Replaced deprecated ``zope.interface.implements`` usage with equivalent
+- Replace deprecated ``zope.interface.implements`` usage with equivalent
   ``zope.interface.implementer`` decorator.
 
-- Dropped support for Python 2.4 and 2.5.
+- Drop support for Python 2.4 and 2.5.
 
-- Added support for Python 3.3.
+- Add support for Python 3.3.
 
 
 3.12.0 (2010-12-14)
 ===================
 
-- Added ``zcml`` extra dependencies and fixed dependencies of
+- Add ``zcml`` extra dependencies and fixed dependencies of
   ``configure.zcml`` on other packages' ``meta.zcml``.
 
-- Added a test for including our own ``configure.zcml``.
+- Add a test for including our own ``configure.zcml``.
 
 3.11.0 (2010-08-13)
 ===================
