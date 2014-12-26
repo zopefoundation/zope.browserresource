@@ -40,7 +40,7 @@ def test_suite():
 long_description = read('README.rst') + '\n\n' + read('CHANGES.rst')
 
 setup(name='zope.browserresource',
-      version='4.1.0.dev0',
+      version='4.1.0',
       url='http://pypi.python.org/pypi/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
