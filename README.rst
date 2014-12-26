@@ -1,6 +1,8 @@
-========
-Overview
-========
+``zope.browserresource`` Overview
+=================================
+
+.. image:: https://travis-ci.org/zopefoundation/zope.interface.png?branch=master
+        :target: https://travis-ci.org/zopefoundation/zope.interface
 
 *This package is at present not reusable without depending on a large
 chunk of the Zope Toolkit and its assumptions. It is maintained by the*

@@ -18,6 +18,10 @@ import sys
 from setuptools import setup, find_packages
 
 
+def read(*rnames):
+    with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
+        return f.read()
+
 def test_suite():
     # use the zope.testrunner machinery to find all the
     # test suites we've put under ourselves
@@ -33,11 +37,10 @@ def test_suite():
     return TestSuite(suites)
 
 
-long_description = (open('README.txt').read() + '\n\n' +
-                    open('CHANGES.txt').read())
+long_description = read('README.rst') + '\n\n' + read('CHANGES.rst')
 
 setup(name='zope.browserresource',
-      version='4.0.3.dev0',
+      version='4.1.0.dev0',
       url='http://pypi.python.org/pypi/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
