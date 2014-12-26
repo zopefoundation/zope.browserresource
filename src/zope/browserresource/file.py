@@ -119,9 +119,8 @@ class File(object):
     def __init__(self, path, name):
         self.path = path
         self.__name__ = name
-        f = open(path, 'rb')
-        self.data = f.read()
-        f.close()
+        with open(path, 'rb') as f:
+            self.data = f.read()
         self.content_type = guess_content_type(path, self.data)[0]
 
         self.lmt = float(os.path.getmtime(path)) or time.time()
@@ -155,7 +154,8 @@ class FileResource(BrowserView, Resource):
           >>> request = TestRequest(REQUEST_METHOD='GET')
           >>> resource = factory(request)
           >>> view, next = resource.browserDefault(request)
-          >>> view() == open(testFilePath, 'rb').read()
+          >>> with open(testFilePath, 'rb') as f:
+          ...     view() == f.read()
           True
           >>> next == ()
           True
@@ -187,7 +187,8 @@ class FileResource(BrowserView, Resource):
           >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
-          >>> resource.GET() == open(testFilePath, 'rb').read()
+          >>> with open(testFilePath, 'rb') as f:
+          ...     resource.GET() == f.read()
           True
           >>> request.response.getHeader('Content-Type') == 'text/plain'
           True
@@ -285,10 +286,8 @@ class FileResource(BrowserView, Resource):
     
     # for unit tests
     def _testData(self):
-        f = open(self.context.path, 'rb')
-        data = f.read()
-        f.close()
-        return data
+        with open(self.context.path, 'rb') as f:
+            return f.read()
 
 
 @adapter(IFileResource, IBrowserRequest)

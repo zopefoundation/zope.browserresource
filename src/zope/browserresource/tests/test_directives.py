@@ -102,8 +102,10 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(
             component.queryAdapter(request, name='test').__class__,
             I18nFileResource)
-        self.assertEqual(v._testData('en'), open(path1, 'rb').read())
-        self.assertEqual(v._testData('fr'), open(path2, 'rb').read())
+        with open(path1, 'rb') as f:
+            self.assertEqual(v._testData('en'), f.read())
+        with open(path2, 'rb') as f:
+            self.assertEqual(v._testData('fr'), f.read())
 
         # translation must be provided for the default language
         config = StringIO(template % (
@@ -131,11 +133,12 @@ class Test(cleanup.CleanUp, unittest.TestCase):
             ))
 
         r = component.getAdapter(request, name='index.html')
-        self.assertEquals(r.__class__, MyResource)
+        self.assertEqual(r.__class__, MyResource)
         r = ProxyFactory(r)
         self.assertEqual(r.__name__, "index.html")
 
     def testFile(self):
+        from zope.security.interfaces import ForbiddenAttribute
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
 
         self.assertEqual(component.queryAdapter(request, name='test'), None)
@@ -149,19 +152,19 @@ class Test(cleanup.CleanUp, unittest.TestCase):
             ''' % path
             ))
 
-        r = component.getAdapter(request, name='index.html')
-        self.assertTrue(isinstance(r, FileResource))
-        r = ProxyFactory(r)
+        unwrapped_r = component.getAdapter(request, name='index.html')
+        self.assertTrue(isinstance(unwrapped_r, FileResource))
+        r = ProxyFactory(unwrapped_r)
         self.assertEqual(r.__name__, "index.html")
 
         # Make sure we can access available attrs and not others
         for n in ('GET', 'HEAD', 'publishTraverse', 'request', '__call__'):
             getattr(r, n)
 
-        self.assertRaises(Exception, getattr, r, '_testData')
+        self.assertRaises(ForbiddenAttribute, getattr, r, '_testData')
 
-        r = removeSecurityProxy(r)
-        self.assertEqual(r._testData(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(unwrapped_r._testData(), f.read())
 
 
     def testPluggableFactory(self):
@@ -246,7 +249,8 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(component.queryAdapter(request, name='test'), None)
 
         r = component.getAdapter(TestRequest(skin=ITestSkin), name='test')
-        self.assertEqual(r._testData(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(r._testData(), f.read())
 
 
 def test_suite():

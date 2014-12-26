@@ -99,7 +99,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
                                           (TestRequest())
 
 
-        self.assertEqual(resource.GET(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(resource.GET(), f.read())
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/plain')
@@ -109,7 +110,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
                         self._createDict('test.txt'), 'en')\
                         (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
-        self.assertEqual(resource.GET(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(resource.GET(), f.read())
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/plain')
@@ -120,7 +122,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
                         self._createDict('test.pt', 'test2.pt'), 'en')\
                         (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
-        self.assertEqual(resource.GET(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(resource.GET(), f.read())
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/html')

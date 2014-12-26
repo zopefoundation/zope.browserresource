@@ -70,8 +70,8 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         factory = DirectoryResourceFactory(path, checker, 'testfiles')
         resource = factory(request)
         view, next = resource.browserDefault(request)
-        self.assertEquals(view(), '')
-        self.assertEquals(next, ())
+        self.assertEqual(view(), '')
+        self.assertEqual(next, ())
 
     def testGetitem(self):
         path = os.path.join(test_directory, 'testfiles')
@@ -87,17 +87,18 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         path = tempfile.mkdtemp()
         try:
             os.mkdir(os.path.join(path, '.svn'))
-            open(os.path.join(path, 'test.txt'), 'w').write('')
+            with open(os.path.join(path, 'test.txt'), 'w') as f:
+                f.write('')
 
             factory = DirectoryResourceFactory(path, checker, 'testfiles')
             resource = factory(request)
 
-            self.assertEquals(resource.get('.svn', None), None)
-            self.assertNotEquals(resource.get('test.txt', None), None)
+            self.assertEqual(resource.get('.svn', None), None)
+            self.assertNotEqual(resource.get('test.txt', None), None)
 
             DirectoryResource.forbidden_names = ('*.txt', )
-            self.assertEquals(resource.get('test.txt', None), None)
-            self.assertNotEquals(resource.get('.svn', None), None)
+            self.assertEqual(resource.get('test.txt', None), None)
+            self.assertNotEqual(resource.get('.svn', None), None)
         finally:
             shutil.rmtree(path)
             DirectoryResource.forbidden_names = old_forbidden_names
@@ -108,7 +109,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         factory = DirectoryResourceFactory(path, checker, 'testfiles')
         resource = factory(request)
         file = ProxyFactory(resource['test.txt'])
-        self.assert_(isProxy(file))
+        self.assertTrue(isProxy(file))
 
     def testURL(self):
         request = TestRequest()
@@ -117,7 +118,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         files = DirectoryResourceFactory(path, checker, 'test_files')(request)
         files.__parent__ = support.site
         file = files['test.gif']
-        self.assertEquals(file(), 'http://127.0.0.1/@@/test_files/test.gif')
+        self.assertEqual(file(), 'http://127.0.0.1/@@/test_files/test.gif')
 
     def testURL2Level(self):
         request = TestRequest()
@@ -128,7 +129,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         files = DirectoryResourceFactory(path, checker, 'test_files')(request)
         files.__parent__ = ob
         file = files['test.gif']
-        self.assertEquals(file(), 'http://127.0.0.1/@@/test_files/test.gif')
+        self.assertEqual(file(), 'http://127.0.0.1/@@/test_files/test.gif')
 
     def testURL3Level(self):
         request = TestRequest()
@@ -139,11 +140,11 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         files = DirectoryResourceFactory(path, checker, 'test_files')(request)
         files.__parent__ = ob
         file = files['test.gif']
-        self.assertEquals(file(), 'http://127.0.0.1/@@/test_files/test.gif')
+        self.assertEqual(file(), 'http://127.0.0.1/@@/test_files/test.gif')
         subdir = files['subdir']
-        self.assert_(proxy.isinstance(subdir, DirectoryResource))
+        self.assertTrue(proxy.isinstance(subdir, DirectoryResource))
         file = subdir['test.gif']
-        self.assertEquals(file(),
+        self.assertEqual(file(),
                           'http://127.0.0.1/@@/test_files/subdir/test.gif')
 
     def testPluggableFactories(self):
@@ -165,10 +166,10 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         provideUtility(ImageResourceFactory, IResourceFactoryFactory, 'gif')
 
         image = resource['test.gif']
-        self.assert_(proxy.isinstance(image, ImageResource))
+        self.assertTrue(proxy.isinstance(image, ImageResource))
 
         file = resource['test.txt']
-        self.assert_(proxy.isinstance(file, FileResource))
+        self.assertTrue(proxy.isinstance(file, FileResource))
 
 def test_suite():
     return makeSuite(Test)

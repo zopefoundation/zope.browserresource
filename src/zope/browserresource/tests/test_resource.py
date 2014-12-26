@@ -39,9 +39,9 @@ class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
         req._vh_root = support.site
         r.__parent__ = support.site
         r.__name__ = 'foo'
-        self.assertEquals(r(), 'http://127.0.0.1/@@/foo')
+        self.assertEqual(r(), 'http://127.0.0.1/@@/foo')
         r.__name__ = '++resource++foo'
-        self.assertEquals(r(), 'http://127.0.0.1/@@/foo')
+        self.assertEqual(r(), 'http://127.0.0.1/@@/foo')
 
     def testGlobalInVirtualHost(self):
         req = TestRequest()
@@ -50,7 +50,7 @@ class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
         req._vh_root = support.site
         r.__parent__ = support.site
         r.__name__ = 'foo'
-        self.assertEquals(r(), 'http://127.0.0.1/x/y/@@/foo')
+        self.assertEqual(r(), 'http://127.0.0.1/x/y/@@/foo')
 
     def testResourceUrl(self):
         # fake IAbsoluteURL adapter
@@ -66,7 +66,7 @@ class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
         req._vh_root = support.site
         r.__parent__ = support.site
         r.__name__ = 'foo'
-        self.assertEquals(r(), 'http://cdn.example.com/@@/foo')
+        self.assertEqual(r(), 'http://cdn.example.com/@@/foo')
 
 
 def test_suite():

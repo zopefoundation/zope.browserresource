@@ -142,7 +142,8 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         resource = ProxyFactory(component.getAdapter(request, name=rname))
         self.assertRaises(Forbidden, getattr, resource, '_testData')
         resource = removeSecurityProxy(resource)
-        self.assertEqual(resource._testData(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(resource._testData(), f.read())
 
     def testResource(self):
         self.assertEqual(
@@ -174,7 +175,8 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         self.assertRaises(Forbidden, getattr, resource, '_testData')
         resource = removeSecurityProxy(resource)
-        self.assertEqual(resource._testData(), open(path, 'rb').read())
+        with open(path, 'rb') as f:
+            self.assertEqual(resource._testData(), f.read())
 
     def testResourceErrors(self):
         self.assertEqual(

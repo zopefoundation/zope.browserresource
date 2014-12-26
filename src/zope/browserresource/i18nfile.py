@@ -59,11 +59,8 @@ class I18nFileResource(FileResource):
 
     # for unit tests
     def _testData(self, language):
-        file = self._data[language]
-        f=open(file.path,'rb')
-        data=f.read()
-        f.close()
-        return data
+        with open(self._data[language].path, 'rb') as f:
+            return f.read()
 
 
 @implementer(IResourceFactory)
