@@ -1,8 +1,8 @@
 ``zope.browserresource`` Overview
 =================================
 
-.. image:: https://travis-ci.org/zopefoundation/zope.interface.png?branch=master
-        :target: https://travis-ci.org/zopefoundation/zope.interface
+.. image:: https://travis-ci.org/zopefoundation/zope.browserresource.png?branch=master
+        :target: https://travis-ci.org/zopefoundation/zope.browserresource
 
 .. note::
    This package is at present not reusable without depending on a large
