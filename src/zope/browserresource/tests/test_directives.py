@@ -44,6 +44,9 @@ from zope.browserresource.i18nfile import I18nFileResource
 from zope.browserresource.directory import DirectoryResource
 from zope.testing import cleanup
 
+from zope.browserresource.metaconfigure import resource
+from zope.browserresource.metaconfigure import I18nResource
+
 tests_path = os.path.join(
     os.path.dirname(zope.browserresource.__file__),
     'tests')
@@ -65,7 +68,6 @@ class R1(object):
     pass
 
 
-
 class ITestLayer(IBrowserRequest):
     """Test Layer."""
 
@@ -79,10 +81,10 @@ class MyResource(object):
         self.request = request
 
 
-class Test(cleanup.CleanUp, unittest.TestCase):
+class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
     def setUp(self):
-        super(Test, self).setUp()
+        super(TestZCML, self).setUp()
         XMLConfig('meta.zcml', zope.browserresource)()
         provideAdapter(DefaultTraversable, (None,), ITraversable)
         self.request = TestRequest()
@@ -264,6 +266,124 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         r = component.getAdapter(TestRequest(skin=ITestSkin), name='test')
         with open(path, 'rb') as f:
             self.assertEqual(r._testData(), f.read())
+
+
+class Context(object):
+
+    class info(object):
+        file = __file__
+        line = 1
+
+    def __init__(self):
+        self.actions = []
+
+    def path(self, s):
+        return s
+
+    def action(self, **kwargs):
+        self.actions.append(kwargs)
+
+class _AbstractHandlerTest(unittest.TestCase):
+
+    if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
+        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
+    def setUp(self):
+        self.context = Context()
+
+    def _call(self, **kwargs):
+        context = self.context
+        self._callFUT(context, 'Name', **kwargs)
+        return context
+
+    def _check_raises(self, regex, **kwargs):
+        with self.assertRaisesRegex(ConfigurationError, regex):
+            self._call(**kwargs)
+
+    def _check_warning_msg(self, msg, **kwargs):
+        import warnings
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            self._call(**kwargs)
+
+        self.assertEqual(1, len(w))
+        self.assertEqual(
+            msg,
+            str(w[0].message))
+
+
+class TestResource(_AbstractHandlerTest):
+
+    def _callFUT(self, *args, **kwargs):
+        resource(*args, **kwargs)
+
+    def test_factory_and_file_and(self):
+        excludes = {
+            'factory': ['file', 'image', 'template'],
+            'file': ['factory', 'image', 'template'],
+            'image': ['factory', 'file', 'template'],
+            'template': ['factory', 'file', 'image']
+        }
+        for main, excluded_args in excludes.items():
+            for excluded_arg in excluded_args:
+                kwargs = {main: 'main', excluded_arg: 'excluded'}
+                __traceback_info__ = main, excluded_arg
+                self._check_raises("Must use exactly one of factory or file",
+                                   **kwargs)
+
+    def _check_warning(self, **kwargs):
+        msg = ('The "template" and "image" attributes of resource directive '
+               'are deprecated in favor of pluggable file resource factories '
+               'based on file extensions. Use the "file" attribute instead.')
+        self._check_warning_msg(msg, **kwargs)
+
+    def test_image_warning(self):
+        self._check_warning(image='image')
+
+    def test_template_warning(self):
+        self._check_warning(template='template')
+
+class TestI18nResource(_AbstractHandlerTest):
+
+    def _callFUT(self, *args, **kwargs):
+        I18nResource(*args).translation(self.context, **kwargs)
+
+    def test_file_and_image(self):
+        self._check_raises(
+            ".*more than one of file",
+            file='file', image='image', language='en')
+
+    def test_no_file_or_image(self):
+        self._check_raises(
+            'At least one of the file',
+            file=None, image=None, language='en')
+
+    def test_image(self):
+        self._check_warning_msg(
+            'The "image" attribute of i18n-resource directive is '
+            'deprecated in favor of simple files. Use the "file" '
+            'attribute instead.',
+            image=__file__, language='en'
+        )
+
+    def test_call_no_name(self):
+        I18nResource(self.context)()
+        self.assertEqual(self.context.actions, [])
+
+    def test_call_public_permission(self):
+        resource = I18nResource(self.context, 'Name', permission='zope.Public')
+        resource.translation(self.context, 'en', file=__file__)
+        resource()
+        self.assertEqual(1, len(self.context.actions))
+
+    def test_call_require(self):
+        resource = I18nResource(self.context, 'Name', permission='zope.Public')
+        resource.translation(self.context, 'en', file=__file__)
+        resource(require={'foo': 'bar'})
+        self.assertEqual(1, len(self.context.actions))
+
+        factory = self.context.actions[0]['args'][1]
+        factory(TestRequest())
 
 
 def test_suite():

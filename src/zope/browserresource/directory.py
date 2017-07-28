@@ -35,7 +35,7 @@ from zope.browserresource.resource import Resource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
 
-_marker = object()
+_not_found = object()
 
 def empty():
     return ''
@@ -69,22 +69,21 @@ class DirectoryResource(BrowserView, Resource):
             raise KeyError(name)
         return res
 
-    def get(self, name, default=_marker):
+    def get(self, name, default=_not_found):
 
         for pat in self.forbidden_names:
             if fnmatch.fnmatch(name, pat):
-                if default is _marker:
+                if default is _not_found:
                     raise NotFound(None, name)
-                else:
-                    return default
-        
+                return default
+
         path = self.context.path
         filename = os.path.join(path, name)
         isfile = os.path.isfile(filename)
         isdir = os.path.isdir(filename)
 
         if not (isfile or isdir):
-            if default is _marker:
+            if default is _not_found:
                 raise NotFound(None, name)
             return default
 

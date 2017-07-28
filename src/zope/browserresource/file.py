@@ -17,10 +17,8 @@
 import os
 import time
 import re
-try:
-    from email.utils import formatdate, parsedate_tz, mktime_tz
-except ImportError: # python 2.4
-    from email.Utils import formatdate, parsedate_tz, mktime_tz
+
+from email.utils import formatdate, parsedate_tz, mktime_tz
 
 from zope.contenttype import guess_content_type
 from zope.interface import implementer, provider
@@ -283,7 +281,7 @@ class FileResource(BrowserView, Resource):
         if etag_adapter is None:
             return None
         return etag_adapter(file_.lmt, file_.data)
-    
+
     # for unit tests
     def _testData(self):
         with open(self.context.path, 'rb') as f:
