@@ -1,16 +1,17 @@
-Changes
-=======
+=========
+ Changes
+=========
 
 4.2.0 (unreleased)
-------------------
+==================
 
-- Add support for Python 3.5.
+- Add support for Python 3.5 and 3.6.
 
-- Drop support for Python 2.6.
+- Drop support for Python 2.6 and 3.3.
 
 
 4.1.0 (2014-12-26)
-------------------
+==================
 
 - Add support for PyPy.  PyPy3 support awaits release of fix for:
   https://bitbucket.org/pypy/pypy/issue/1946
@@ -21,20 +22,20 @@ Changes
 
 
 4.0.2 (2014-11-04)
-------------------
+==================
 
 - Return no ETag if no adapter is registered, disabling the
   requirement for applications that was introduced in 3.11.0 (GitHub #1)
 
 
 4.0.1 (2013-04-03)
-------------------
+==================
 
 - Fix some Python 3 string vs bytes issues.
 
 
 4.0.0 (2013-02-20)
-------------------
+==================
 
 - Replace deprecated ``zope.component.adapts`` usage with equivalent
   ``zope.component.adapter`` decorator.
@@ -54,7 +55,7 @@ Changes
 
 
 3.12.0 (2010-12-14)
--------------------
+===================
 
 - Add ``zcml`` extra dependencies and fixed dependencies of
   ``configure.zcml`` on other packages' ``meta.zcml``.
@@ -62,24 +63,24 @@ Changes
 - Add a test for including our own ``configure.zcml``.
 
 3.11.0 (2010-08-13)
--------------------
+===================
 
 - Support the HTTP ETag header for file resources.  ETag generation can be
   customized or disabled by providing an IETag multi-adapter on
   (IFileResource, your-application-skin).
 
 3.10.3 (2010-04-30)
--------------------
+===================
 
 - Prefer the standard libraries doctest module to the one from zope.testing.
 
 3.10.2 (2009-11-25)
--------------------
+===================
 
 - The previous release had a broken egg, sorry.
 
 3.10.1 (2009-11-24)
--------------------
+===================
 
 - Import hooks functionality from zope.component after it was moved there from
   zope.site. This lifts the dependency on zope.site and thereby, ZODB.
@@ -88,16 +89,16 @@ Changes
   there from zope.location.
 
 3.10.0 (2009-09-25)
--------------------
+===================
 
 - Add an ability to forbid publishing of some files in the resource directory,
   this is done by fnmatch'ing the wildcards in the ``forbidden_names``class
   attribute of ``DirectoryResource``. By default, the ``.svn`` is in that
   attribute, so directories won't publish subversion system directory that can
-  contain private information. 
+  contain private information.
 
 3.9.0 (2009-08-27)
-------------------
+==================
 
 Initial release. This package was splitted off zope.app.publisher as a part
 of refactoring process.
@@ -110,7 +111,7 @@ Additional changes that are made during refactoring:
    file extension, so it's now possible to add new resource types without
    introducing new ZCML directives and they will work inside resource
    directories as well.
-   
+
    NOTE: the "resource_factories" attribute from the DirectoryResource
    was removed, so if you were using this attribute for changing resource
    classes for some file extensions, you need to migrate your code to new
@@ -122,7 +123,7 @@ Additional changes that are made during refactoring:
    To migrate, simply rename the "image" argument in browser:resource and
    browser:i18n-resource directives to "file", if you don't do this, resouces
    will work, but you'll get deprecation warnings.
- 
+
    If you need custom behaviour for images, you can register a resource
    factory utility for needed file extensions.
 

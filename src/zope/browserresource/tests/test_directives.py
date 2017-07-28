@@ -16,31 +16,29 @@
 
 import os
 import unittest
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import StringIO
+
 from zope import component
-from zope.interface import Interface, implements, directlyProvides, providedBy
+from zope.interface import Interface, implementer
 
 import zope.security.management
 from zope.configuration.xmlconfig import xmlconfig, XMLConfig
 from zope.configuration.exceptions import ConfigurationError
 from zope.publisher.browser import TestRequest
-from zope.publisher.interfaces import IDefaultViewName
-from zope.publisher.interfaces.browser import IBrowserPublisher
+
+
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.publisher.interfaces.browser import IBrowserSkinType, IDefaultSkin
-from zope.security.proxy import removeSecurityProxy, ProxyFactory
-from zope.security.permission import Permission
-from zope.security.interfaces import IPermission
+
+from zope.security.proxy import ProxyFactory
+
+
 from zope.traversing.adapters import DefaultTraversable
 from zope.traversing.interfaces import ITraversable
 
 import zope.publisher.defaultview
 import zope.browserresource
-from zope.component import provideAdapter, provideUtility
-from zope.component.testfiles.views import R1, IV
+from zope.component import provideAdapter
+
 from zope.browserresource.file import FileResource
 from zope.browserresource.i18nfile import I18nFileResource
 from zope.browserresource.directory import DirectoryResource
@@ -50,15 +48,23 @@ tests_path = os.path.join(
     os.path.dirname(zope.browserresource.__file__),
     'tests')
 
-template = """<configure
+template = u"""<configure
    xmlns='http://namespaces.zope.org/zope'
    xmlns:browser='http://namespaces.zope.org/browser'
    i18n_domain='zope'>
    %s
    </configure>"""
 
+class IV(Interface):
+    def index():
+        "A method"
 
-request = TestRequest()
+
+@implementer(IV)
+class R1(object):
+    pass
+
+
 
 class ITestLayer(IBrowserRequest):
     """Test Layer."""
@@ -79,28 +85,28 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         super(Test, self).setUp()
         XMLConfig('meta.zcml', zope.browserresource)()
         provideAdapter(DefaultTraversable, (None,), ITraversable)
-
-    def tearDown(self):
-        super(Test, self).tearDown()
+        self.request = TestRequest()
 
     def testI18nResource(self):
-        self.assertEqual(component.queryAdapter(request, name='test'), None)
+        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
 
         path1 = os.path.join(tests_path, 'testfiles', 'test.pt')
         path2 = os.path.join(tests_path, 'testfiles', 'test2.pt')
 
-        xmlconfig(StringIO(template % (
-            '''
+        xmlconfig(StringIO(
+            template
+            %
+            u'''
             <browser:i18n-resource name="test" defaultLanguage="fr">
               <browser:translation language="en" file="%s" />
               <browser:translation language="fr" file="%s" />
             </browser:i18n-resource>
             ''' % (path1, path2)
-            )))
+        ))
 
-        v = component.getAdapter(request, name='test')
+        v = component.getAdapter(self.request, name='test')
         self.assertEqual(
-            component.queryAdapter(request, name='test').__class__,
+            component.queryAdapter(self.request, name='test').__class__,
             I18nFileResource)
         with open(path1, 'rb') as f:
             self.assertEqual(v._testData('en'), f.read())
@@ -108,31 +114,33 @@ class Test(cleanup.CleanUp, unittest.TestCase):
             self.assertEqual(v._testData('fr'), f.read())
 
         # translation must be provided for the default language
-        config = StringIO(template % (
-            '''
+        config = StringIO(
+            template %
+            u'''
             <browser:i18n-resource name="test" defaultLanguage="fr">
               <browser:translation language="en" file="%s" />
               <browser:translation language="lt" file="%s" />
             </browser:i18n-resource>
             ''' % (path1, path2)
-            ))
+        )
         self.assertRaises(ConfigurationError, xmlconfig, config)
 
     def testFactory(self):
         self.assertEqual(
-            component.queryAdapter(request, name='index.html'), None)
+            component.queryAdapter(self.request, name='index.html'), None)
 
-        xmlconfig(StringIO(template %
-            '''
+        xmlconfig(StringIO(
+            template %
+            u'''
             <browser:resource
                 name="index.html"
                 factory="
                   zope.browserresource.tests.test_directives.MyResource"
                 />
             '''
-            ))
+        ))
 
-        r = component.getAdapter(request, name='index.html')
+        r = component.getAdapter(self.request, name='index.html')
         self.assertEqual(r.__class__, MyResource)
         r = ProxyFactory(r)
         self.assertEqual(r.__name__, "index.html")
@@ -141,18 +149,19 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         from zope.security.interfaces import ForbiddenAttribute
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
 
-        self.assertEqual(component.queryAdapter(request, name='test'), None)
+        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
 
-        xmlconfig(StringIO(template %
-            '''
+        xmlconfig(StringIO(
+            template %
+            u'''
             <browser:resource
                 name="index.html"
                 file="%s"
                 />
             ''' % path
-            ))
+        ))
 
-        unwrapped_r = component.getAdapter(request, name='index.html')
+        unwrapped_r = component.getAdapter(self.request, name='index.html')
         self.assertTrue(isinstance(unwrapped_r, FileResource))
         r = ProxyFactory(unwrapped_r)
         self.assertEqual(r.__name__, "index.html")
@@ -183,33 +192,35 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         component.provideUtility(ImageResourceFactory, IResourceFactoryFactory,
                                  name='gif')
 
-        xmlconfig(StringIO(template %
-            '''
+        xmlconfig(StringIO(
+            template %
+            u'''
             <browser:resource
                 name="test.gif"
                 file="%s"
                 />
             ''' % os.path.join(tests_path, 'testfiles', 'test.gif')
-            ))
+        ))
 
-        r = component.getAdapter(request, name='test.gif')
+        r = component.getAdapter(self.request, name='test.gif')
         self.assertTrue(isinstance(r, ImageResource))
 
     def testDirectory(self):
         path = os.path.join(tests_path, 'testfiles', 'subdir')
 
-        self.assertEqual(component.queryAdapter(request, name='dir'), None)
+        self.assertEqual(component.queryAdapter(self.request, name='dir'), None)
 
-        xmlconfig(StringIO(template %
-            '''
+        xmlconfig(StringIO(
+            template %
+            u'''
             <browser:resourceDirectory
                 name="dir"
                 directory="%s"
                 />
             ''' % path
-            ))
+        ))
 
-        r = component.getAdapter(request, name='dir')
+        r = component.getAdapter(self.request, name='dir')
         self.assertTrue(isinstance(r, DirectoryResource))
         r = ProxyFactory(r)
         self.assertEqual(r.__name__, "dir")
@@ -221,8 +232,9 @@ class Test(cleanup.CleanUp, unittest.TestCase):
 
         self.assertRaises(Exception, getattr, r, 'directory_factory')
 
-        inexistent_dir = StringIO(template %
-            '''
+        inexistent_dir = StringIO(
+            template %
+            u'''
             <browser:resourceDirectory
                 name="dir"
                 directory="does-not-exist"
@@ -232,11 +244,12 @@ class Test(cleanup.CleanUp, unittest.TestCase):
         self.assertRaises(ConfigurationError, xmlconfig, inexistent_dir)
 
     def test_SkinResource(self):
-        self.assertEqual(component.queryAdapter(request, name='test'), None)
+        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
 
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
-        xmlconfig(StringIO(template % (
-            '''
+        xmlconfig(StringIO(
+            template %
+            u'''
             <browser:resource
                 name="test"
                 file="%s"
@@ -244,9 +257,9 @@ class Test(cleanup.CleanUp, unittest.TestCase):
                   zope.browserresource.tests.test_directives.ITestLayer"
                 />
             ''' % path
-            )))
+        ))
 
-        self.assertEqual(component.queryAdapter(request, name='test'), None)
+        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
 
         r = component.getAdapter(TestRequest(skin=ITestSkin), name='test')
         with open(path, 'rb') as f:
@@ -254,4 +267,4 @@ class Test(cleanup.CleanUp, unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(Test)
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
