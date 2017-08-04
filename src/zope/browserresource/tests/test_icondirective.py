@@ -14,21 +14,19 @@
 """Test Icon-Directive
 """
 import os
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-from unittest import TestCase, main, makeSuite
+from io import StringIO
+
+from unittest import TestCase
 
 from zope import component
 from zope.configuration.exceptions import ConfigurationError
 from zope.configuration.xmlconfig import xmlconfig, XMLConfig
 from zope.interface import implementer
 from zope.publisher.browser import TestRequest
-from zope.security.checker import ProxyFactory, CheckerPublic
+from zope.security.checker import ProxyFactory
 from zope.security.interfaces import Forbidden
 from zope.security.proxy import removeSecurityProxy
-from zope.traversing.interfaces import IContainmentRoot
+
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
@@ -39,7 +37,7 @@ from zope.browserresource.tests import support
 from zope.testing import cleanup
 
 
-template = """<configure
+template = u"""<configure
    xmlns='http://namespaces.zope.org/zope'
    xmlns:browser='http://namespaces.zope.org/browser'
    i18n_domain='zope'
@@ -71,7 +69,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         XMLConfig('meta.zcml', zope.browserresource)()
         defineCheckers()
         component.provideAdapter(AbsoluteURL, (None, None), IAbsoluteURL)
-        
+
     def test(self):
         self.assertEqual(
             component.queryMultiAdapter((ob, request), name='zmi_icon'),
@@ -83,12 +81,12 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Configure the icon and make sure we can render the resulting view:
         xmlconfig(StringIO(template % (
-            '''
+            u'''
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
                       file="%s" />
             ''' % path
-            )))
+        )))
 
         view = component.getMultiAdapter((ob, request), name='zmi_icon')
         rname = 'zope-component-testfiles-views-IC-zmi_icon.gif'
@@ -102,12 +100,12 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Make sure that the title attribute works
         xmlconfig(StringIO(template % (
-            '''
+            u'''
             <browser:icon name="zmi_icon_w_title"
                       for="zope.component.testfiles.views.IC"
                       file="%s" title="click this!" />
             ''' % path
-            )))
+        )))
 
         view = component.getMultiAdapter(
             (ob, request), name='zmi_icon_w_title')
@@ -120,13 +118,13 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Make sure that the width and height attributes work
         xmlconfig(StringIO(template % (
-            '''
+            u'''
             <browser:icon name="zmi_icon_w_width_and_height"
                       for="zope.component.testfiles.views.IC"
                       file="%s"
                       width="20" height="12" />
             ''' % path
-            )))
+        )))
 
         view = component.getMultiAdapter((ob, request),
                                          name='zmi_icon_w_width_and_height')
@@ -154,14 +152,14 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         path = os.path.join(path, 'testfiles', 'test.gif')
 
         xmlconfig(StringIO(template % (
-            '''
+            u'''
             <browser:resource name="zmi_icon_res"
                       file="%s" />
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
                       resource="zmi_icon_res" />
             ''' % path
-            )))
+        )))
 
         view = component.getMultiAdapter((ob, request), name='zmi_icon')
         rname = "zmi_icon_res"
@@ -187,7 +185,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         path = os.path.join(path, 'testfiles', 'test.gif')
 
         config = StringIO(template % (
-            '''
+            u'''
             <browser:resource name="zmi_icon_res"
                       file="%s" />
             <browser:icon name="zmi_icon"
@@ -195,18 +193,14 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
                       file="%s"
                       resource="zmi_icon_res" />
             ''' % (path, path)
-            ))
+        ))
         self.assertRaises(ConfigurationError, xmlconfig, config)
 
         config = StringIO(template % (
-            """
+            u"""
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
                       />
             """
-            ))
+        ))
         self.assertRaises(ConfigurationError, xmlconfig, config)
-
-
-def test_suite():
-    return makeSuite(Test)

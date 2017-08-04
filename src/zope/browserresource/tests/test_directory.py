@@ -16,7 +16,7 @@
 import os
 import tempfile
 import shutil
-from unittest import TestCase, main, makeSuite
+from unittest import TestCase
 
 from zope.publisher.interfaces import NotFound
 from zope.proxy import isProxy
@@ -145,7 +145,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         self.assertTrue(proxy.isinstance(subdir, DirectoryResource))
         file = subdir['test.gif']
         self.assertEqual(file(),
-                          'http://127.0.0.1/@@/test_files/subdir/test.gif')
+                         'http://127.0.0.1/@@/test_files/subdir/test.gif')
 
     def testPluggableFactories(self):
         path = os.path.join(test_directory, 'testfiles')
@@ -171,5 +171,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         file = resource['test.txt']
         self.assertTrue(proxy.isinstance(file, FileResource))
 
-def test_suite():
-    return makeSuite(Test)
+    def test_get_matches_forbidden(self):
+        resource = DirectoryResource(None, None)
+        with self.assertRaises(LookupError):
+            resource.get('.svn')

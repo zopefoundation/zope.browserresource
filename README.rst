@@ -1,8 +1,19 @@
 ``zope.browserresource`` Overview
 =================================
 
+.. image:: https://img.shields.io/pypi/v/zope.browserresource.svg
+        :target: https://pypi.python.org/pypi/zope.browserresource/
+        :alt: Latest release
+
+.. image:: https://img.shields.io/pypi/pyversions/zope.browserresource.svg
+        :target: https://pypi.org/project/zope.browserresource/
+        :alt: Supported Python versions
+
 .. image:: https://travis-ci.org/zopefoundation/zope.browserresource.png?branch=master
         :target: https://travis-ci.org/zopefoundation/zope.browserresource
+
+.. image:: https://coveralls.io/repos/github/zopefoundation/zope.browserresource/badge.svg?branch=master
+        :target: https://coveralls.io/github/zopefoundation/zope.browserresource?branch=master
 
 .. note::
    This package is at present not reusable without depending on a large
@@ -19,8 +30,8 @@ sheets, or JavaScript files.
 Resources are be registered under a symbolic name and can later be referred to
 by that name, so their usage is independent from their physical location.
 
-You can register a single file with the `<browser:resource>` directive, and a
-whole directory with the `<browser:resourceDirectory>` directive, for example
+You can register a single file with the ``<browser:resource>`` directive, and a
+whole directory with the ``<browser:resourceDirectory>`` directive, for example
 
   <browser:resource
     file="/path/to/static.file"
@@ -35,18 +46,18 @@ whole directory with the `<browser:resourceDirectory>` directive, for example
 This causes a named adapter to be registered that adapts the request to
 zope.interface.Interface (XXX why do we not use an explicit interface?),
 so to later retrieve a resource, use
-`zope.component.getAdapter(request, name='myfile')`.
+``zope.component.getAdapter(request, name='myfile')``.
 
 There are two ways to traverse to a resource,
 
-1. with the 'empty' view on a site, e. g. `http://localhost/@@/myfile`
+1. with the 'empty' view on a site, e. g. ``http://localhost/@@/myfile``
    (This is declared by zope.browserresource)
 
-2. with the `++resource++` namespace, e. g. `http://localhost/++resource++myfile`
+2. with the ``++resource++`` namespace, e. g. ``http://localhost/++resource++myfile``
    (This is declared by zope.traversing.namespace)
 
 In case of resource-directories traversal simply continues through its contents,
-e. g. `http://localhost/@@/main-images/subdir/sample.jpg`
+e. g. ``http://localhost/@@/main-images/subdir/sample.jpg``
 
 Rather than putting together the URL to a resource manually, you should use
 zope.traversing.browser.interfaces.IAbsoluteURL to get the URL, or for a
@@ -57,7 +68,7 @@ because you want to use a web server specialized in serving static files instead
 of the appserver, you can register an IAbsoluteURL adapter for the site under
 the name 'resource' that will be used to compute the base URLs for resources.
 
-For example, if you register 'http://static.example.com/' as the base 'resource'
-URL, the resources from the above example would yield the following absolute
-URLs: http://static.example.com/@@/myfile and
-http://static.example.com/@@/main-images
+For example, if you register ``http://static.example.com/`` as the
+base 'resource' URL, the resources from the above example would yield
+the following absolute URLs: ``http://static.example.com/@@/myfile``
+and ``http://static.example.com/@@/main-images``.

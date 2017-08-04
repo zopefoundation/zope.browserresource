@@ -49,7 +49,7 @@ class ResourceFactoryWrapper(object):
         resource.__Security_checker__ = self.__checker
         resource.__name__ = self.__name
         return resource
-    
+
 
 def resource(_context, name, layer=IDefaultBrowserLayer,
              permission='zope.Public', factory=None,
@@ -60,14 +60,12 @@ def resource(_context, name, layer=IDefaultBrowserLayer,
 
     checker = NamesChecker(allowed_names, permission)
 
-    if (factory and (file or image or template)) or \
-       (file and (factory or image or template)) or \
-       (image and (factory or file or template)) or \
-       (template and (factory or file or image)):
+    too_many = bool(factory) + bool(file) + bool(image) + bool(template)
+    if too_many > 1:
         raise ConfigurationError(
             "Must use exactly one of factory or file or image or template"
             " attributes for resource directives"
-            )
+        )
 
     if image or template:
         import warnings
@@ -84,9 +82,9 @@ def resource(_context, name, layer=IDefaultBrowserLayer,
             file = template
 
     _context.action(
-        discriminator = ('resource', name, IBrowserRequest, layer),
-        callable = resourceHandler,
-        args = (name, layer, checker, factory, file, _context.info),
+        discriminator=('resource', name, IBrowserRequest, layer),
+        callable=resourceHandler,
+        args=(name, layer, checker, factory, file, _context.info),
         )
 
 
@@ -116,16 +114,16 @@ def resourceDirectory(_context, name, directory, layer=IDefaultBrowserLayer,
 
     factory = DirectoryResourceFactory(directory, checker, name)
     _context.action(
-        discriminator = ('resource', name, IBrowserRequest, layer),
-        callable = handler,
-        args = ('registerAdapter',
-                factory, (layer,), Interface, name, _context.info),
-        )
+        discriminator=('resource', name, IBrowserRequest, layer),
+        callable=handler,
+        args=('registerAdapter',
+              factory, (layer,), Interface, name, _context.info),
+    )
 
 
 def icon(_context, name, for_, file=None, resource=None,
-                  layer=IDefaultBrowserLayer, title=None,
-                  width=16, height=16):
+         layer=IDefaultBrowserLayer, title=None,
+         width=16, height=16):
 
     iname = for_.getName()
 
@@ -159,18 +157,18 @@ def icon(_context, name, for_, file=None, resource=None,
     vfactory = IconViewFactory(resource, title, width, height)
 
     _context.action(
-        discriminator = ('view', name, vfactory, layer),
-        callable = handler,
-        args = ('registerAdapter',
-                vfactory, (for_, layer), Interface, name, _context.info)
-        )
+        discriminator=('view', name, vfactory, layer),
+        callable=handler,
+        args=('registerAdapter',
+              vfactory, (for_, layer), Interface, name, _context.info)
+    )
 
     _context.action(
-        discriminator = None,
-        callable = provideInterface,
-        args = (for_.__module__+'.'+for_.getName(),
-                for_)
-        )
+        discriminator=None,
+        callable=provideInterface,
+        args=(for_.__module__+'.'+for_.getName(),
+              for_)
+    )
 
 
 class I18nResource(object):
@@ -213,7 +211,7 @@ class I18nResource(object):
         self.__data[language] = File(_context.path(file), self.name)
 
 
-    def __call__(self, require = None):
+    def __call__(self, require=None):
         if self.name is None:
             return
 
@@ -239,12 +237,12 @@ class I18nResource(object):
             factory = self._proxyFactory(factory, checker)
 
         self._context.action(
-            discriminator = ('i18n-resource', self.name, self.type, self.layer),
-            callable = handler,
-            args = ('registerAdapter',
-                    factory, (self.layer,), Interface, self.name,
-                    self._context.info)
-            )
+            discriminator=('i18n-resource', self.name, self.type, self.layer),
+            callable=handler,
+            args=('registerAdapter',
+                  factory, (self.layer,), Interface, self.name,
+                  self._context.info)
+        )
 
 
     def _proxyFactory(self, factory, checker):
