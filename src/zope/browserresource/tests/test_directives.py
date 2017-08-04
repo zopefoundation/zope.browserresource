@@ -18,34 +18,28 @@ import os
 import unittest
 from io import StringIO
 
-from zope import component
-from zope.interface import Interface, implementer
-
+import zope.browserresource
+import zope.publisher.defaultview
 import zope.security.management
-from zope.configuration.xmlconfig import xmlconfig, XMLConfig
+
+from zope import component
+from zope.component import provideAdapter
 from zope.configuration.exceptions import ConfigurationError
+from zope.configuration.xmlconfig import xmlconfig, XMLConfig
+from zope.interface import Interface, implementer
 from zope.publisher.browser import TestRequest
-
-
 from zope.publisher.interfaces.browser import IBrowserRequest
-
 from zope.security.proxy import ProxyFactory
-
-
+from zope.testing import cleanup
 from zope.traversing.adapters import DefaultTraversable
 from zope.traversing.interfaces import ITraversable
 
-import zope.publisher.defaultview
-import zope.browserresource
-from zope.component import provideAdapter
-
+from zope.browserresource.directory import DirectoryResource
 from zope.browserresource.file import FileResource
 from zope.browserresource.i18nfile import I18nFileResource
-from zope.browserresource.directory import DirectoryResource
-from zope.testing import cleanup
-
-from zope.browserresource.metaconfigure import resource
 from zope.browserresource.metaconfigure import I18nResource
+from zope.browserresource.metaconfigure import resource
+
 
 tests_path = os.path.join(
     os.path.dirname(zope.browserresource.__file__),

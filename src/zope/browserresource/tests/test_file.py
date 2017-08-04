@@ -18,19 +18,19 @@ import doctest
 import os
 import re
 import unittest
-from email.utils import formatdate#, parsedate_tz, mktime_tz
+from email.utils import formatdate
 import time
 
 from zope.component import getGlobalSiteManager
-
-from zope.testing import cleanup
-from zope.testing.renormalizing import RENormalizing
-from zope.publisher.browser import TestRequest
-from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.security.checker import NamesChecker
 from zope.component import provideAdapter, adapter
 from zope.interface import implementer
 from zope.interface.verify import verifyObject
+from zope.publisher.browser import TestRequest
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.security.checker import NamesChecker
+
+from zope.testing import cleanup
+from zope.testing.renormalizing import RENormalizing
 
 from zope.browserresource.file import FileResourceFactory, FileETag
 from zope.browserresource.interfaces import IFileResource, IETag
@@ -98,7 +98,6 @@ class TestFile(unittest.TestCase):
 
     def test_FileResource_GET_sets_cache_headers(self):
         # Test caching headers set by FileResource.GET
-        import time
         factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
 
         timestamp = time.time()
