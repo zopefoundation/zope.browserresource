@@ -5,7 +5,7 @@
 4.2.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fix dependencies of the `zcml` extra.
 
 
 4.2.0 (2017-08-04)

@@ -41,7 +41,7 @@ long_description = read('README.rst') + '\n\n' + read('CHANGES.rst')
 
 ZCML_REQUIRES = [
     'zope.component[zcml]',
-    'zope.securitypolicy[zcml] >= 3.8',
+    'zope.security[zcml] >= 3.8',
 ]
 
 TESTS_REQUIRE = ZCML_REQUIRES + [
