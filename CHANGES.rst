@@ -2,7 +2,7 @@
  Changes
 =========
 
-4.2.1 (unreleased)
+4.2.1 (2017-09-01)
 ==================
 
 - Fix dependencies of the `zcml` extra.
