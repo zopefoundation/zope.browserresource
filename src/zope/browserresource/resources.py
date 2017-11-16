@@ -23,10 +23,11 @@ from zope.publisher.interfaces.browser import IBrowserPublisher
 
 @implementer(IBrowserPublisher)
 class Resources(BrowserView):
-    """A view that can be traversed further to access browser resources
-    
-    This view is usually registered for zope.component.interfaces.ISite objects
-    with no name, so resources will be available at <site>/@@/<resource>.
+    """
+    A view that can be traversed further to access browser resources.
+
+    This view is usually registered for :class:`zope.component.interfaces.ISite` objects
+    with no name, so resources will be available at ``<site>/@@/<resource>``.
 
     Let's test how it's traversed to get registered resources. Let's create
     a sample resource class and register it.
@@ -42,17 +43,17 @@ class Resources(BrowserView):
       ...         self.request = request
       ...     def __call__(self):
       ...         return 'http://localhost/testresource'
-   
+
       >>> provideAdapter(Resource, (IDefaultBrowserLayer,), Interface, 'test')
-    
+
     Now, create a site and request objects and get the Resources object to
     work with.
-     
+
       >>> site = object()
       >>> request = TestRequest()
       >>> resources = Resources(site, request)
 
-    Okay, let's test the publishTraverse method. It should traverse to our
+    Okay, let's test the `publishTraverse` method. It should traverse to our
     registered resource.
 
       >>> resource = resources.publishTraverse(request, 'test')
@@ -63,7 +64,7 @@ class Resources(BrowserView):
       >>> resource()
       'http://localhost/testresource'
 
-    However, it will raise NotFound exception if we try to traverse to an
+    However, it will raise `.NotFound` exception if we try to traverse to an
     unregistered resource.
 
       >>> resources.publishTraverse(request, 'does-not-exist')
@@ -71,18 +72,19 @@ class Resources(BrowserView):
       ...
       NotFound: Object: <zope.browserresource.resources.Resources object at 0x...>,
                 name: 'does-not-exist'
-      
+
     When accessed without further traversing, it returns an empty page and no
     futher traversing steps.
-    
+
       >>> view, path = resources.browserDefault(request)
       >>> view() == b''
       True
       >>> path == ()
       True
 
-    The Resources view also provides __getitem__ method for use in templates.
-    
+    The Resources view also provides ``__getitem__`` method for use in templates.
+    It is equivalent to `publishTraverse`.
+
       >>> resource = resources['test']
       >>> resource.__parent__ is site
       True
@@ -90,10 +92,21 @@ class Resources(BrowserView):
       True
       >>> resource()
       'http://localhost/testresource'
-    
     """
+
     def publishTraverse(self, request, name):
-        '''See zope.publisher.interfaces.browser.IBrowserPublisher interface'''
+        """
+        Query for the default adapter on *request* named *name* and return it.
+
+        This is usually a `.IResource` as registered with `.IResourceDirective`.
+
+        The resource object is `located <.locate>` beneath the context of this
+        object with the given *name*.
+
+        :raises NotFound: If no adapter can be found.
+
+        .. seealso:: `zope.publisher.interfaces.browser.IBrowserPublisher`
+        """
         resource = queryAdapter(request, name=name)
         if resource is None:
             raise NotFound(self, name)
@@ -106,9 +119,10 @@ class Resources(BrowserView):
         return empty, ()
 
     def __getitem__(self, name):
-        '''A helper method to make this view usable from templates,
-        so resources can be acessed in template like context/@@/<resourcename>.
-        '''
+        """
+        A helper method to make this view usable from templates,
+        so resources can be accessed in template like ``context/@@/<resourcename>``.
+        """
         return self.publishTraverse(self.request, name)
 
 

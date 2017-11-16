@@ -50,17 +50,39 @@ class Directory(object):
 
 @implementer(IBrowserPublisher)
 class DirectoryResource(BrowserView, Resource):
+    """
+    A resource representing an entire directory.
 
+    It is traversable to the items contained within the directory.
+    See `get`.
+    """
+
+    #: The default resource factory to use for files if no more
+    #: specific factory has been registered.
     default_factory = FileResourceFactory
+
+    #: The resource factory to use for directories.
     directory_factory = None # this will be assigned later in the module
-    forbidden_names = ('.svn', )
+
+    #: A sequence of name patterns usable with `fnmatch.fnmatch`.
+    #: Traversing to files that match these names will not
+    #: produce resources.
+    forbidden_names = ('.svn', '.git')
 
     def publishTraverse(self, request, name):
-        '''See interface IBrowserPublisher'''
+        """
+        Uses `get` to traverse to the *name*.
+
+        .. seealso:: :meth:`zope.publisher.interfaces.browser.IBrowserPublisher.publishTraverse`
+        """
         return self.get(name)
 
     def browserDefault(self, request):
-        '''See interface IBrowserPublisher'''
+        """
+        Returns an empty callable and tuple.
+
+        .. seealso:: :meth:`zope.publisher.interfaces.browser.IBrowserPublisher.browserDefault`
+        """
         return empty, ()
 
     def __getitem__(self, name):
@@ -70,6 +92,26 @@ class DirectoryResource(BrowserView, Resource):
         return res
 
     def get(self, name, default=_not_found):
+        """
+        Locate *name* on the filesystem and return a `.IResource` for
+        it.
+
+        If the *name* cannot be found and no *default* is given, then
+        raise `.NotFound`.
+
+        If the *name* matches one of the :attr:`forbidden patterns
+        <forbidden_names>` then returns the *default* (if given) or
+        raise `.NotFound` (when not given).
+
+        When the *name* refers to a file, we `query <.queryUtility>`
+        for a `.IResourceFactoryFactory` utility named for the file's
+        extension (e.g., ``css``) and use it to produce a resource.
+        If no such utility can be found, we use :attr:`our default
+        <default_factory>`.
+
+        When the *name* refers to a directory, we use :attr:`our
+        directory factory <directory_factory>`.
+        """
 
         for pat in self.forbidden_names:
             if fnmatch.fnmatch(name, pat):

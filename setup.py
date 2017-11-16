@@ -50,8 +50,8 @@ TESTS_REQUIRE = ZCML_REQUIRES + [
 ]
 
 setup(name='zope.browserresource',
-      version='4.3.dev0',
-      url='http://github.com/zopefoundation/zope.browserresource/',
+      version='4.3.0.dev0',
+      url='https://github.com/zopefoundation/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       classifiers=[
@@ -95,6 +95,10 @@ setup(name='zope.browserresource',
       extras_require={
           'test': TESTS_REQUIRE,
           'zcml': ZCML_REQUIRES,
+          'docs': [
+              'Sphinx',
+              'repoze.sphinx.autointerface',
+          ],
       },
       zip_safe=False,
 )

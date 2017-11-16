@@ -42,7 +42,9 @@ def parse_etags(value):
     r"""Parse a list of entity tags.
 
     HTTP/1.1 specifies the following syntax for If-Match/If-None-Match
-    headers::
+    headers:
+
+    .. code-block:: abnf
 
         If-Match = "If-Match" ":" ( "*" | 1#entity-tag )
         If-None-Match = "If-None-Match" ":" ( "*" | 1#entity-tag )
@@ -113,6 +115,12 @@ def quote_etag(etag):
 
 
 class File(object):
+    """
+    An object representing a file on the filesystem.
+
+    These are created by `FileResourceFactory` for use with
+    `FileResource`.
+    """
 
     def __init__(self, path, name):
         self.path = path
@@ -127,6 +135,12 @@ class File(object):
 
 @implementer(IFileResource, IBrowserPublisher)
 class FileResource(BrowserView, Resource):
+    """
+    Default implementation of `.IFileResource`.
+
+    This class also implements
+    :class:`zope.publisher.interfaces.browser.IBrowserPublisher`.
+    """
 
     cacheTimeout = 86400
 
@@ -170,13 +184,16 @@ class FileResource(BrowserView, Resource):
         return getattr(self, request.method), ()
 
     def chooseContext(self):
-        '''Choose the appropriate context.
+        """
+        Choose the appropriate context.
 
         This method can be overriden in subclasses, that need to choose
         appropriate file, based on current request or other condition,
         like, for example, i18n files.
 
-        '''
+        .. seealso:: `.I18nFileResource`
+        .. seealso:: `.II18nResourceDirective`
+        """
         return self.context
 
     def GET(self):
@@ -291,6 +308,11 @@ class FileResource(BrowserView, Resource):
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
 class FileETag(object):
+    """
+    Default implementation of `.IETag`
+    registered for `.IFileResource`
+    and :class:`zope.publisher.interfaces.browser.IBrowserRequest`.
+    """
 
     def __init__(self, context, request):
         self.context = context
@@ -310,6 +332,11 @@ def setCacheControl(response, secs=86400):
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
 class FileResourceFactory(object):
+    """
+    Implementation of `.IResourceFactory` producing `FileResource`.
+
+    The class itself provides `.IResourceFactoryFactory`
+    """
 
     resourceClass = FileResource
 

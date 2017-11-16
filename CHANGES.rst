@@ -2,16 +2,18 @@
  Changes
 =========
 
-4.3 (unreleased)
-================
+4.3.0 (unreleased)
+==================
 
-- Nothing changed yet.
+- Host documentation at https://zopebrowserresource.readthedocs.io
+
+- Add ``.git`` to the list of directory names that are ignored by default.
 
 
 4.2.1 (2017-09-01)
 ==================
 
-- Fix dependencies of the `zcml` extra.
+- Fix dependencies of the ``zcml`` extra.
 
 
 4.2.0 (2017-08-04)
@@ -49,17 +51,17 @@
 4.0.0 (2013-02-20)
 ==================
 
-- Replace deprecated ``zope.component.adapts`` usage with equivalent
-  ``zope.component.adapter`` decorator.
+- Replace deprecated `zope.component.adapts` usage with equivalent
+  `zope.component.adapter` decorator.
 
-- Replace deprecated ``zope.interface.classProvides`` usage with equivalent
-  ``zope.interface.provider`` decorator.
+- Replace deprecated `zope.interface.classProvides` usage with equivalent
+  `zope.interface.provider` decorator.
 
-- Replace deprecated ``zope.interface.implementsOnly`` usage with equivalent
-  ``zope.interface.implementer_only`` decorator.
+- Replace deprecated `zope.interface.implementsOnly` usage with equivalent
+  `zope.interface.implementer_only` decorator.
 
-- Replace deprecated ``zope.interface.implements`` usage with equivalent
-  ``zope.interface.implementer`` decorator.
+- Replace deprecated `zope.interface.implements` usage with equivalent
+  `zope.interface.implementer` decorator.
 
 - Drop support for Python 2.4 and 2.5.
 
