@@ -7,5 +7,7 @@ include .travis.yml
 include .coveragerc
 
 recursive-include src *
+recursive-include docs *.rst
+recursive-include docs *.py
 
 global-exclude *.pyc

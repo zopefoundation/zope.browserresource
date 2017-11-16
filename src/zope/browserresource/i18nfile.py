@@ -24,17 +24,26 @@ from zope.browserresource.interfaces import IResourceFactoryFactory
 
 @implementer(II18nAware)
 class I18nFileResource(FileResource):
+    """
+    A :class:`zope.i18n.interfaces.II18nAware` file resource.
+
+    .. seealso:: `.II18nResourceDirective`
+    """
 
     def __init__(self, data, request, defaultLanguage='en'):
-        """Creates an internationalized file resource.  data should be
-        a mapping from languages to File objects.
+        """
+        Creates an internationalized file resource.
+
+        :param dict data: A mapping from languages to `.File` objects.
         """
         self._data = data
         self.request = request
         self.defaultLanguage = defaultLanguage
 
     def chooseContext(self):
-        """Choose the appropriate context according to language"""
+        """
+        Choose the appropriate context (file) according to language.
+        """
         langs = self.getAvailableLanguages()
         language = negotiator.getLanguage(langs, self.request)
         try:
@@ -50,11 +59,14 @@ class I18nFileResource(FileResource):
         'See II18nAware'
         if language not in self._data:
             raise ValueError(
-                  'cannot set nonexistent language (%s) as default' % language)
+                'cannot set nonexistent language (%s) as default' % language)
         self.defaultLanguage = language
 
     def getAvailableLanguages(self):
-        'See II18nAware'
+        """
+        The available languages are those defined in the *data*
+        mapping given to this object.
+        """
         return self._data.keys()
 
     # for unit tests

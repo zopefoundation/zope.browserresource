@@ -43,14 +43,16 @@ class IBasicResourceInformation(Interface):
 
 class IResourceDirective(IBasicResourceInformation):
     """
-    Defines a browser resource
+    Defines a browser resource.
+
+    .. seealso:: `.FileResourceFactory`
     """
 
     name = TextLine(
         title=u"The name of the resource",
         description=u"""
         This is the name used in resource urls. Resource urls are of
-        the form site/@@/resourcename, where site is the url of
+        the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
 
         We make resource urls site-relative (as opposed to
@@ -82,7 +84,7 @@ class IResourceDirective(IBasicResourceInformation):
         description=u"""
         If the image attribute is used, then an image resource, rather
         than a file resource will be created.
-        
+
         This attribute is deprecated in favor of pluggable resource types,
         registered per extension. Use the "file" attribute instead.
         """,
@@ -97,7 +99,7 @@ class IResourceDirective(IBasicResourceInformation):
 
         This attribute is deprecated in favor of pluggable resource types,
         registered per extension. Use the "file" attribute instead. To
-        use page template resources, you need to instal zope.ptresource
+        use page template resources, you need to install zope.ptresource
         package.
         """,
         required=False
@@ -112,7 +114,7 @@ class II18nResourceDirective(IBasicResourceInformation):
         title=u"The name of the resource",
         description=u"""
         This is the name used in resource urls. Resource urls are of
-        the form site/@@/resourcename, where site is the url of
+        the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
 
         We make resource urls site-relative (as opposed to
@@ -128,7 +130,7 @@ class II18nResourceDirective(IBasicResourceInformation):
 
 class II18nResourceTranslationSubdirective(IBasicResourceInformation):
     """
-    Subdirective to II18nResourceDirective.
+    Subdirective to `II18nResourceDirective`.
     """
 
     language = TextLine(
@@ -157,14 +159,16 @@ class II18nResourceTranslationSubdirective(IBasicResourceInformation):
 
 class IResourceDirectoryDirective(IBasicResourceInformation):
     """
-    Defines a directory containing browser resource
+    Defines a directory containing browser resources.
+
+    .. seealso:: `.DirectoryResource`
     """
 
     name = TextLine(
         title=u"The name of the resource",
         description=u"""
         This is the name used in resource urls. Resource urls are of
-        the form site/@@/resourcename, where site is the url of
+        the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
 
         We make resource urls site-relative (as opposed to
@@ -181,7 +185,7 @@ class IResourceDirectoryDirective(IBasicResourceInformation):
 
 class IIconDirective(Interface):
     """
-    Define an icon for an interface
+    Define an icon for an interface.
     """
 
     name = TextLine(
@@ -232,7 +236,7 @@ class IIconDirective(Interface):
         required=False,
         default=16
         )
-    
+
     height = Int(
         title=u"The height of the icon.",
         description=u"""
