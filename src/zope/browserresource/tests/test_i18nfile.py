@@ -13,7 +13,7 @@
 ##############################################################################
 """I18n File-Resource Tests
 """
-from unittest import main, makeSuite
+from unittest import TestCase
 import os
 
 from zope.publisher.interfaces import NotFound
@@ -37,9 +37,30 @@ import zope.browserresource.tests as p
 from zope.i18n.interfaces import INegotiator
 from zope.i18n.negotiator import negotiator
 
-from zope.i18n.tests.testii18naware import TestII18nAware
 
 test_directory = os.path.dirname(p.__file__)
+
+class AbstractTestII18nAwareMixin(object):
+
+    def setUp(self):
+        super(AbstractTestII18nAwareMixin, self).setUp()
+        self.object = self._createObject()
+        self.object.setDefaultLanguage('fr')
+
+    def _createObject(self):
+        # Should create an object that has lt, en and fr as available
+        # languages
+        raise NotImplementedError()
+
+    def testGetDefaultLanguage(self):
+        self.assertEqual(self.object.getDefaultLanguage(), 'fr')
+
+    def testSetDefaultLanguage(self):
+        self.object.setDefaultLanguage('lt')
+        self.assertEqual(self.object.getDefaultLanguage(), 'lt')
+
+    def testGetAvailableLanguages(self):
+        self.assertEqual(sorted(self.object.getAvailableLanguages()), ['en', 'fr', 'lt'])
 
 
 @adapter(IFileResource, IBrowserRequest)
@@ -53,11 +74,10 @@ class MyETag(object):
         return 'myetag'
 
 
-class Test(cleanup.CleanUp, TestII18nAware):
+class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
     def setUp(self):
         super(Test, self).setUp()
-        TestII18nAware.setUp(self)
         provideAdapter(HTTPCharsets, (IHTTPRequest,), IUserPreferredCharsets)
         provideAdapter(BrowserLanguages, (IHTTPRequest,), IUserPreferredLanguages)
         # Setup the negotiator utility
@@ -76,8 +96,10 @@ class Test(cleanup.CleanUp, TestII18nAware):
     def _createDict(self, filename1='test.pt', filename2='test2.pt'):
         path1 = os.path.join(test_directory, 'testfiles', filename1)
         path2 = os.path.join(test_directory, 'testfiles', filename2)
-        return { 'en': File(path1, filename1),
-                 'fr': File(path2, filename2) }
+        return {
+            'en': File(path1, filename1),
+            'fr': File(path2, filename2)
+        }
 
 
     def testNoTraversal(self):
@@ -107,8 +129,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
 
         # case 2: prefer lt, have only en and fr, should get en
         resource = I18nFileResourceFactory(
-                        self._createDict('test.txt'), 'en')\
-                        (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
+            self._createDict('test.txt'), 'en')\
+            (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
         with open(path, 'rb') as f:
             self.assertEqual(resource.GET(), f.read())
@@ -119,8 +141,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
         # case 3: prefer fr, have it, should get fr
         path = os.path.join(test_directory, 'testfiles', 'test2.pt')
         resource = I18nFileResourceFactory(
-                        self._createDict('test.pt', 'test2.pt'), 'en')\
-                        (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
+            self._createDict('test.pt', 'test2.pt'), 'en')\
+            (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         with open(path, 'rb') as f:
             self.assertEqual(resource.GET(), f.read())
@@ -142,8 +164,8 @@ class Test(cleanup.CleanUp, TestII18nAware):
 
         # case 2: prefer lt, have only en and fr, should get en
         resource = I18nFileResourceFactory(
-                        self._createDict('test.txt'), 'en')\
-                        (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
+            self._createDict('test.txt'), 'en')\
+            (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
         self.assertEqual(resource.HEAD(), b'')
 
@@ -152,14 +174,10 @@ class Test(cleanup.CleanUp, TestII18nAware):
 
         # case 3: prefer fr, have it, should get fr
         resource = I18nFileResourceFactory(
-                        self._createDict('test.pt', 'test2.pt'), 'en')\
-                        (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
+            self._createDict('test.pt', 'test2.pt'), 'en')\
+            (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         self.assertEqual(resource.HEAD(), b'')
 
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/html')
-
-
-def test_suite():
-    return makeSuite(Test)
