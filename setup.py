@@ -50,7 +50,7 @@ TESTS_REQUIRE = ZCML_REQUIRES + [
 ]
 
 setup(name='zope.browserresource',
-      version='4.3',
+      version='4.4.dev0',
       url='https://github.com/zopefoundation/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
