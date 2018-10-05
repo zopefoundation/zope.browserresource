@@ -2,8 +2,8 @@
  Changes
 =========
 
-4.3.0 (unreleased)
-==================
+4.3 (2018-10-05)
+================
 
 - Add support for Python 3.7.
 
@@ -12,7 +12,8 @@
 - Add ``.git`` to the list of directory names that are ignored by default.
 
 - Fix test compatibility with zope.i18n 4.3.
-  See https://github.com/zopefoundation/zope.browserresource/issues/8
+  See `#8 <https://github.com/zopefoundation/zope.browserresource/issues/8>`_
+
 
 4.2.1 (2017-09-01)
 ==================
