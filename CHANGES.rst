@@ -5,6 +5,8 @@
 4.3.0 (unreleased)
 ==================
 
+- Add support for Python 3.7.
+
 - Host documentation at https://zopebrowserresource.readthedocs.io
 
 - Add ``.git`` to the list of directory names that are ignored by default.
