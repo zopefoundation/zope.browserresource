@@ -5,7 +5,7 @@
 4.5 (unreleased)
 ================
 
-- Nothing changed yet.
+- Drop support for ``python setup.py test``.
 
 
 4.4 (2019-12-10)

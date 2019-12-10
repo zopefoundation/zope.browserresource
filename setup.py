@@ -14,27 +14,12 @@
 """zope.browserresource setup
 """
 import os
-import sys
 from setuptools import setup, find_packages
 
 
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
-
-def test_suite():
-    # use the zope.testrunner machinery to find all the
-    # test suites we've put under ourselves
-    from zope.testrunner.options import get_options
-    from zope.testrunner.find import find_suites
-    from unittest import TestSuite
-    here = os.path.abspath(os.path.dirname(sys.argv[0]))
-    args = sys.argv[:]
-    src = os.path.join(here, 'src')
-    defaults = ['--test-path', src]
-    options = get_options(args, defaults)
-    suites = list(find_suites(options))
-    return TestSuite(suites)
 
 
 long_description = read('README.rst') + '\n\n' + read('CHANGES.rst')
@@ -55,6 +40,7 @@ setup(name='zope.browserresource',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       classifiers=[
+          'Development Status :: 5 - Production/Stable',
           'Environment :: Web Environment',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: Zope Public License',
@@ -77,8 +63,6 @@ setup(name='zope.browserresource',
       license='ZPL 2.1',
       packages=find_packages('src'),
       package_dir={'': 'src'},
-      test_suite='__main__.test_suite',
-      tests_require=TESTS_REQUIRE,
       namespace_packages=['zope'],
       include_package_data=True,
       install_requires=[
@@ -101,5 +85,4 @@ setup(name='zope.browserresource',
               'repoze.sphinx.autointerface',
           ],
       },
-      zip_safe=False,
-)
+      zip_safe=False)
