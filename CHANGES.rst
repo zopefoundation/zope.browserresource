@@ -6,6 +6,8 @@
 ================
 
 - Add support for Python 3.8.
+- We decided to make the registration of the IETag adapter conditional on the environment (not Zope2)
+  because Products.Five register this Adapter explicit.
 
 
 4.3 (2018-10-05)
