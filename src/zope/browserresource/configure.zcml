@@ -5,7 +5,7 @@
   <include file="meta.zcml" package="zope.security" />
 
   <adapter factory=".resource.AbsoluteURL" />
-  <adapter factory=".file.FileETag" zcml:condition="not-installed Zope2"/>
+  <adapter factory=".file.FileETag" zcml:condition="not-installed Zope"/>
 
   <view
       for="zope.component.interfaces.ISite"
