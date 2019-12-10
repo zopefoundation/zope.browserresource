@@ -2,7 +2,7 @@
  Changes
 =========
 
-4.4 (unreleased)
+4.4 (2019-12-10)
 ================
 
 - Make the registration of the ``FileETag`` adapter conditional on the environment
