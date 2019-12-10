@@ -6,8 +6,10 @@
 ================
 
 - Add support for Python 3.8.
-- We decided to make the registration of the IETag adapter conditional on the environment (not Zope2)
-  because Products.Five register this Adapter explicit.
+
+- Make the registration of the ``FileETag`` adapter conditional on the environment
+  as Zope registers this adapter explicitly in ``Products.Five.browser``.
+  See `#12 <https://github.com/zopefoundation/zope.browserresource/pull/12>`_.
 
 
 4.3 (2018-10-05)
