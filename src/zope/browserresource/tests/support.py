@@ -29,6 +29,7 @@ class Site:
     def getSiteManager(self):
         return zope.component.getGlobalSiteManager()
 
+
 site = Site()
 
 

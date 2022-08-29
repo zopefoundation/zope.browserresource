@@ -34,7 +34,7 @@ class IBasicResourceInformation(Interface):
         For information on layers, see the documentation for the skin
         directive. Defaults to "default".""",
         required=False
-        )
+    )
 
     permission = Permission(
         title=u"The permission needed to access the resource.",
@@ -42,7 +42,8 @@ class IBasicResourceInformation(Interface):
         If a permission isn't specified, the resource will always be
         accessible.""",
         required=False
-        )
+    )
+
 
 class IResourceDirective(IBasicResourceInformation):
     """
@@ -61,7 +62,7 @@ class IResourceDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     factory = GlobalObject(
         title=u"Resource Factory",
@@ -69,7 +70,7 @@ class IResourceDirective(IBasicResourceInformation):
                     u"should only expect to get the request passed when "
                     u"called.",
         required=False
-        )
+    )
 
     file = Path(
         title=u"File",
@@ -80,7 +81,7 @@ class IResourceDirective(IBasicResourceInformation):
                     u"for given file extension, the default FileResource "
                     u"factory will be used.",
         required=False
-        )
+    )
 
     image = Path(
         title=u"Image",
@@ -92,7 +93,7 @@ class IResourceDirective(IBasicResourceInformation):
         registered per extension. Use the "file" attribute instead.
         """,
         required=False
-        )
+    )
 
     template = Path(
         title=u"Template",
@@ -106,7 +107,8 @@ class IResourceDirective(IBasicResourceInformation):
         package.
         """,
         required=False
-        )
+    )
+
 
 class II18nResourceDirective(IBasicResourceInformation):
     """
@@ -123,13 +125,14 @@ class II18nResourceDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     defaultLanguage = TextLine(
         title=u"Default language",
         description=u"Defines the default language",
         required=False
-        )
+    )
+
 
 class II18nResourceTranslationSubdirective(IBasicResourceInformation):
     """
@@ -140,13 +143,13 @@ class II18nResourceTranslationSubdirective(IBasicResourceInformation):
         title=u"Language",
         description=u"Language of this translation of the resource",
         required=True
-        )
+    )
 
     file = Path(
         title=u"File",
         description=u"The file containing the resource data.",
         required=False
-        )
+    )
 
     image = Path(
         title=u"Image",
@@ -158,7 +161,8 @@ class II18nResourceTranslationSubdirective(IBasicResourceInformation):
         Use the "file" attribute instead.
         """,
         required=False
-        )
+    )
+
 
 class IResourceDirectoryDirective(IBasicResourceInformation):
     """
@@ -177,13 +181,13 @@ class IResourceDirectoryDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     directory = Path(
         title=u"Directory",
         description=u"The directory containing the resource data.",
         required=True
-        )
+    )
 
 
 class IIconDirective(Interface):
@@ -195,7 +199,7 @@ class IIconDirective(Interface):
         title=u"The name of the icon.",
         description=u"The name shows up in URLs/paths. For example 'foo'.",
         required=True
-        )
+    )
 
     for_ = GlobalInterface(
         title=u"The interface this icon is for.",
@@ -203,25 +207,25 @@ class IIconDirective(Interface):
         The icon will be for all objects that implement this
         interface.""",
         required=True
-        )
+    )
 
     file = Path(
         title=u"File",
         description=u"The file containing the icon.",
         required=False
-        )
+    )
 
     resource = TextLine(
         title=u"Resource",
         description=u"A resource containing the icon.",
         required=False
-        )
+    )
 
     title = MessageID(
         title=u"Title",
         description=u"Descriptive title",
         required=False
-        )
+    )
 
     layer = GlobalInterface(
         title=u"The layer the icon should be found in",
@@ -229,7 +233,7 @@ class IIconDirective(Interface):
         For information on layers, see the documentation for the skin
         directive. Defaults to "default".""",
         required=False
-        )
+    )
 
     width = Int(
         title=u"The width of the icon.",
@@ -238,7 +242,7 @@ class IIconDirective(Interface):
         attribute. Defaults to 16.""",
         required=False,
         default=16
-        )
+    )
 
     height = Int(
         title=u"The height of the icon.",
@@ -247,4 +251,4 @@ class IIconDirective(Interface):
         attribute. Defaults to 16.""",
         required=False,
         default=16
-        )
+    )

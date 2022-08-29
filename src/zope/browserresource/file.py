@@ -151,7 +151,11 @@ class FileResource(BrowserView, Resource):
         '''File resources can't be traversed further, so raise NotFound if
         someone tries to traverse it.
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> resource.publishTraverse(request, '_testData')
@@ -165,7 +169,11 @@ class FileResource(BrowserView, Resource):
     def browserDefault(self, request):
         '''Return a callable for processing browser requests.
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest(REQUEST_METHOD='GET')
           >>> resource = factory(request)
           >>> view, next = resource.browserDefault(request)
@@ -202,7 +210,11 @@ class FileResource(BrowserView, Resource):
     def GET(self):
         '''Return a file data for downloading with GET requests
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> with open(testFilePath, 'rb') as f:
@@ -277,7 +289,11 @@ class FileResource(BrowserView, Resource):
     def HEAD(self):
         '''Return proper headers and no content for HEAD requests
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> resource.HEAD() == b''

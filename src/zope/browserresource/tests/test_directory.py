@@ -43,13 +43,16 @@ test_directory = os.path.dirname(p.__file__)
 
 checker = NamesChecker(
     ('get', '__getitem__', 'request', 'publishTraverse')
-    )
+)
+
 
 @implementer(IContained)
 class Ob(object):
     __parent__ = __name__ = None
 
+
 ob = Ob()
+
 
 class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
@@ -81,7 +84,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         factory = DirectoryResourceFactory(path, checker, 'testfiles')
         resource = factory(request)
         self.assertRaises(KeyError, resource.__getitem__, 'doesnotexist')
-        file = resource['test.txt']
+        self.assertTrue(resource['test.txt'])
 
     def testForbiddenNames(self):
         request = TestRequest()
@@ -161,6 +164,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         class ImageResourceFactory(object):
             def __init__(self, path, checker, name):
                 pass
+
             def __call__(self, request):
                 return ImageResource(None, request)
 

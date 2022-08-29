@@ -40,6 +40,7 @@ class IResource(Interface):
         Return the absolute URL of this resource.
         """
 
+
 class IFileResource(IResource):
     """
     A resource representing a single file.
@@ -55,6 +56,7 @@ class IResourceFactory(Interface):
 
     def __call__(request):
         """Return an `IResource` object"""
+
 
 class IResourceFactoryFactory(Interface):
     """
@@ -72,6 +74,7 @@ class IResourceFactoryFactory(Interface):
 
     def __call__(path, checker, name):
         """Return an IResourceFactory"""
+
 
 class IETag(Interface):
     """

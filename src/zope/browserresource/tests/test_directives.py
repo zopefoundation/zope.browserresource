@@ -53,6 +53,7 @@ template = u"""<configure
    %s
    </configure>"""
 
+
 class IV(Interface):
     def index():
         "A method"
@@ -65,6 +66,7 @@ class R1(object):
 
 class ITestLayer(IBrowserRequest):
     """Test Layer."""
+
 
 class ITestSkin(ITestLayer):
     """Test Skin."""
@@ -85,7 +87,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         self.request = TestRequest()
 
     def testI18nResource(self):
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         path1 = os.path.join(tests_path, 'testfiles', 'test.pt')
         path2 = os.path.join(tests_path, 'testfiles', 'test2.pt')
@@ -146,7 +149,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         from zope.security.interfaces import ForbiddenAttribute
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
 
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         xmlconfig(StringIO(
             template %
@@ -172,7 +176,6 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         with open(path, 'rb') as f:
             self.assertEqual(unwrapped_r._testData(), f.read())
 
-
     def testPluggableFactory(self):
 
         class ImageResource(object):
@@ -182,6 +185,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         class ImageResourceFactory(object):
             def __init__(self, path, checker, name):
                 pass
+
             def __call__(self, request):
                 return ImageResource(None, request)
 
@@ -205,7 +209,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
     def testDirectory(self):
         path = os.path.join(tests_path, 'testfiles', 'subdir')
 
-        self.assertEqual(component.queryAdapter(self.request, name='dir'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='dir'), None)
 
         xmlconfig(StringIO(
             template %
@@ -241,7 +246,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         self.assertRaises(ConfigurationError, xmlconfig, inexistent_dir)
 
     def test_SkinResource(self):
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
         xmlconfig(StringIO(
@@ -256,7 +262,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
             ''' % path
         ))
 
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         r = component.getAdapter(TestRequest(skin=ITestSkin), name='test')
         with open(path, 'rb') as f:
@@ -277,6 +284,7 @@ class Context(object):
 
     def action(self, **kwargs):
         self.actions.append(kwargs)
+
 
 class _AbstractHandlerTest(unittest.TestCase):
 
@@ -338,6 +346,7 @@ class TestResource(_AbstractHandlerTest):
 
     def test_template_warning(self):
         self._check_warning(template='template')
+
 
 class TestI18nResource(_AbstractHandlerTest):
 

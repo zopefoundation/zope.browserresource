@@ -42,6 +42,7 @@ from zope.browserresource.interfaces import IFileResource
 
 test_directory = os.path.dirname(p.__file__)
 
+
 class AbstractTestII18nAwareMixin(object):
 
     def setUp(self):
@@ -62,7 +63,9 @@ class AbstractTestII18nAwareMixin(object):
         self.assertEqual(self.object.getDefaultLanguage(), 'lt')
 
     def testGetAvailableLanguages(self):
-        self.assertEqual(sorted(self.object.getAvailableLanguages()), ['en', 'fr', 'lt'])
+        self.assertEqual(
+            sorted(self.object.getAvailableLanguages()),
+            ['en', 'fr', 'lt'])
 
 
 @adapter(IFileResource, IBrowserRequest)
@@ -81,13 +84,14 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
     def setUp(self):
         super(Test, self).setUp()
         provideAdapter(HTTPCharsets, (IHTTPRequest,), IUserPreferredCharsets)
-        provideAdapter(BrowserLanguages, (IHTTPRequest,), IUserPreferredLanguages)
+        provideAdapter(BrowserLanguages, (IHTTPRequest,),
+                       IUserPreferredLanguages)
         # Setup the negotiator utility
         provideUtility(negotiator, INegotiator)
         provideAdapter(MyETag)
 
     def _createObject(self):
-        obj = I18nFileResource({'en':None, 'lt':None, 'fr':None},
+        obj = I18nFileResource({'en': None, 'lt': None, 'fr': None},
                                TestRequest(), 'fr')
         return obj
 
@@ -103,11 +107,10 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
             'fr': File(path2, filename2)
         }
 
-
     def testNoTraversal(self):
 
-        resource = I18nFileResourceFactory(self._createDict(), 'en')\
-                                          (TestRequest())
+        resource = I18nFileResourceFactory(
+            self._createDict(), 'en')(TestRequest())
 
         self.assertRaises(NotFound,
                           resource.publishTraverse,
@@ -119,9 +122,8 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
         # case 1: no language preference, should get en
         path = os.path.join(test_directory, 'testfiles', 'test.txt')
 
-        resource = I18nFileResourceFactory(self._createDict('test.txt'), 'en')\
-                                          (TestRequest())
-
+        resource = I18nFileResourceFactory(
+            self._createDict('test.txt'), 'en')(TestRequest())
 
         with open(path, 'rb') as f:
             self.assertEqual(resource.GET(), f.read())
@@ -131,8 +133,8 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
         # case 2: prefer lt, have only en and fr, should get en
         resource = I18nFileResourceFactory(
-            self._createDict('test.txt'), 'en')\
-            (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
+            self._createDict('test.txt'), 'en')(
+            TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
         with open(path, 'rb') as f:
             self.assertEqual(resource.GET(), f.read())
@@ -143,8 +145,8 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
         # case 3: prefer fr, have it, should get fr
         path = os.path.join(test_directory, 'testfiles', 'test2.pt')
         resource = I18nFileResourceFactory(
-            self._createDict('test.pt', 'test2.pt'), 'en')\
-            (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
+            self._createDict('test.pt', 'test2.pt'), 'en')(
+            TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         with open(path, 'rb') as f:
             self.assertEqual(resource.GET(), f.read())
@@ -152,12 +154,11 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
         response = resource.request.response
         self.assertEqual(response.getHeader('Content-Type'), 'text/html')
 
-
     def testFileHEAD(self):
 
         # case 1: no language preference, should get en
-        resource = I18nFileResourceFactory(self._createDict('test.txt'), 'en')\
-                                          (TestRequest())
+        resource = I18nFileResourceFactory(
+            self._createDict('test.txt'), 'en')(TestRequest())
 
         self.assertEqual(resource.HEAD(), b'')
 
@@ -166,8 +167,8 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
         # case 2: prefer lt, have only en and fr, should get en
         resource = I18nFileResourceFactory(
-            self._createDict('test.txt'), 'en')\
-            (TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
+            self._createDict('test.txt'), 'en')(
+            TestRequest(HTTP_ACCEPT_LANGUAGE='lt'))
 
         self.assertEqual(resource.HEAD(), b'')
 
@@ -176,8 +177,8 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
         # case 3: prefer fr, have it, should get fr
         resource = I18nFileResourceFactory(
-            self._createDict('test.pt', 'test2.pt'), 'en')\
-            (TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
+            self._createDict('test.pt', 'test2.pt'), 'en')(
+            TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         self.assertEqual(resource.HEAD(), b'')
 

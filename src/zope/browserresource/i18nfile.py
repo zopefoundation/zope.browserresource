@@ -80,7 +80,6 @@ class I18nFileResource(FileResource):
 @provider(IResourceFactoryFactory)
 class I18nFileResourceFactory(object):
 
-
     def __init__(self, data, defaultLanguage):
         self.__data = data
         self.__defaultLanguage = defaultLanguage

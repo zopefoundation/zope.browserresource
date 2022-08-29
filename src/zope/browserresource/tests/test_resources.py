@@ -25,8 +25,10 @@ from zope.testing.renormalizing import RENormalizing
 def setUp(test):
     cleanup.setUp()
 
+
 def tearDown(test):
     cleanup.tearDown()
+
 
 def test_suite():
     checker = RENormalizing([
@@ -40,4 +42,4 @@ def test_suite():
             setUp=setUp, tearDown=tearDown,
             checker=checker,
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
-        ))
+    ))

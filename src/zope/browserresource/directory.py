@@ -39,16 +39,20 @@ from zope.browserresource.resource import Resource
 
 _not_found = object()
 
+
 def empty():
     return ''
 
 # we only need this class as a context for DirectoryResource
+
+
 class Directory(object):
 
     def __init__(self, path, checker, name):
         self.path = path
         self.checker = checker
         self.__name__ = name
+
 
 @implementer(IBrowserPublisher)
 class DirectoryResource(BrowserView, Resource):
@@ -64,7 +68,7 @@ class DirectoryResource(BrowserView, Resource):
     default_factory = FileResourceFactory
 
     #: The resource factory to use for directories.
-    directory_factory = None # this will be assigned later in the module
+    directory_factory = None  # this will be assigned later in the module
 
     #: A sequence of name patterns usable with `fnmatch.fnmatch`.
     #: Traversing to files that match these names will not
@@ -76,7 +80,7 @@ class DirectoryResource(BrowserView, Resource):
         Uses `get` to traverse to the *name*.
 
         .. seealso:: :meth:`zope.publisher.interfaces.browser.IBrowserPublisher.publishTraverse`
-        """
+        """  # noqa: E501 line too long
         return self.get(name)
 
     def browserDefault(self, request):
@@ -84,7 +88,7 @@ class DirectoryResource(BrowserView, Resource):
         Returns an empty callable and tuple.
 
         .. seealso:: :meth:`zope.publisher.interfaces.browser.IBrowserPublisher.browserDefault`
-        """
+        """  # noqa: E501 line too long
         return empty, ()
 
     def __getitem__(self, name):
@@ -160,5 +164,6 @@ class DirectoryResourceFactory(object):
         resource.__Security_checker__ = self.__checker
         resource.__name__ = self.__name
         return resource
+
 
 DirectoryResource.directory_factory = DirectoryResourceFactory

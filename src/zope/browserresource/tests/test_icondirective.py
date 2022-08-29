@@ -47,12 +47,15 @@ template = u"""<configure
 
 request = TestRequest()
 
+
 @implementer(IC)
 class Ob(object):
     pass
 
+
 ob = Ob()
 request._vh_root = support.site
+
 
 def defineCheckers():
     # define the appropriate checker for a FileResource for these tests
