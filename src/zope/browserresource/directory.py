@@ -25,15 +25,17 @@ import fnmatch
 import os
 
 from zope.component import queryUtility
-from zope.interface import implementer, provider
+from zope.interface import implementer
+from zope.interface import provider
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces.browser import IBrowserPublisher
 
 from zope.browserresource.file import FileResourceFactory
-from zope.browserresource.resource import Resource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
+from zope.browserresource.resource import Resource
+
 
 _not_found = object()
 

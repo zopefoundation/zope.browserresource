@@ -15,7 +15,8 @@
 """
 from zope.i18n.interfaces import II18nAware
 from zope.i18n.negotiator import negotiator
-from zope.interface import implementer, provider
+from zope.interface import implementer
+from zope.interface import provider
 
 from zope.browserresource.file import FileResource
 from zope.browserresource.interfaces import IResourceFactory

@@ -15,16 +15,15 @@
 """
 import unittest
 
-from zope import component
-
-from zope.publisher.browser import TestRequest
-
 import zope.component.interfaces
+from zope.publisher.browser import TestRequest
+from zope.testing import cleanup
+from zope.traversing.browser.absoluteurl import AbsoluteURL
+from zope.traversing.browser.interfaces import IAbsoluteURL
+
+from zope import component
 from zope.browserresource.resource import Resource
 from zope.browserresource.tests import support
-from zope.traversing.browser.interfaces import IAbsoluteURL
-from zope.traversing.browser.absoluteurl import AbsoluteURL
-from zope.testing import cleanup
 
 
 class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):

@@ -14,28 +14,30 @@
 """Directory-based resources test
 """
 import os
-import tempfile
 import shutil
+import tempfile
 from unittest import TestCase
 
-from zope.publisher.interfaces import NotFound
-from zope.proxy import isProxy
-from zope.publisher.browser import TestRequest
-from zope.security import proxy
-from zope.security.checker import NamesChecker, ProxyFactory
+from zope.component import provideAdapter
+from zope.component import provideUtility
 from zope.interface import implementer
 from zope.location.interfaces import IContained
+from zope.proxy import isProxy
+from zope.publisher.browser import TestRequest
+from zope.publisher.interfaces import NotFound
+from zope.security import proxy
+from zope.security.checker import NamesChecker
+from zope.security.checker import ProxyFactory
+from zope.testing import cleanup
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
-from zope.component import provideAdapter, provideUtility
 
-from zope.testing import cleanup
-
-from zope.browserresource.directory import \
-     DirectoryResourceFactory, DirectoryResource
-from zope.browserresource.file import FileResource
 import zope.browserresource.tests as p
+from zope.browserresource.directory import DirectoryResource
+from zope.browserresource.directory import DirectoryResourceFactory
+from zope.browserresource.file import FileResource
 from zope.browserresource.tests import support
+
 
 test_directory = os.path.dirname(p.__file__)
 

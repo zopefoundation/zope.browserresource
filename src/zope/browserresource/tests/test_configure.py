@@ -1,6 +1,8 @@
-from zope.component.testing import setUp, tearDown
 import doctest
 import unittest
+
+from zope.component.testing import setUp
+from zope.component.testing import tearDown
 
 
 def test_suite():

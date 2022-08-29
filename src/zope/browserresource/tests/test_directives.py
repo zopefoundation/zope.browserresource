@@ -18,15 +18,14 @@ import os
 import unittest
 from io import StringIO
 
-import zope.browserresource
 import zope.publisher.defaultview
 import zope.security.management
-
-from zope import component
 from zope.component import provideAdapter
 from zope.configuration.exceptions import ConfigurationError
-from zope.configuration.xmlconfig import xmlconfig, XMLConfig
-from zope.interface import Interface, implementer
+from zope.configuration.xmlconfig import XMLConfig
+from zope.configuration.xmlconfig import xmlconfig
+from zope.interface import Interface
+from zope.interface import implementer
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.proxy import ProxyFactory
@@ -34,6 +33,8 @@ from zope.testing import cleanup
 from zope.traversing.adapters import DefaultTraversable
 from zope.traversing.interfaces import ITraversable
 
+import zope.browserresource
+from zope import component
 from zope.browserresource.directory import DirectoryResource
 from zope.browserresource.file import FileResource
 from zope.browserresource.i18nfile import I18nFileResource
@@ -280,7 +281,8 @@ class Context(object):
 class _AbstractHandlerTest(unittest.TestCase):
 
     if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
-        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+        assertRaisesRegex = (
+            unittest.TestCase.assertRaisesRegexp)  # pragma: no cover
 
     def setUp(self):
         self.context = Context()

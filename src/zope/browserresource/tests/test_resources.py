@@ -14,11 +14,13 @@
 """Test Browser Resources
 """
 
-import re
 import doctest
+import re
 import unittest
+
 from zope.testing import cleanup
 from zope.testing.renormalizing import RENormalizing
+
 
 def setUp(test):
     cleanup.setUp()

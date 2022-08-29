@@ -13,10 +13,13 @@
 ##############################################################################
 """ZCML directives for defining browser resources
 """
-from zope.configuration.fields import GlobalObject, GlobalInterface
-from zope.configuration.fields import Path, MessageID
+from zope.configuration.fields import GlobalInterface
+from zope.configuration.fields import GlobalObject
+from zope.configuration.fields import MessageID
+from zope.configuration.fields import Path
 from zope.interface import Interface
-from zope.schema import TextLine, Int
+from zope.schema import Int
+from zope.schema import TextLine
 from zope.security.zcml import Permission
 
 

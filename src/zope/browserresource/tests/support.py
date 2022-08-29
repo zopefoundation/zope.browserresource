@@ -22,6 +22,7 @@ from zope.traversing.interfaces import IContainmentRoot
 
 import zope.browserresource.resource
 
+
 @implementer(zope.component.interfaces.ISite, IContainmentRoot)
 class Site:
 

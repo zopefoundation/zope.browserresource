@@ -15,26 +15,25 @@
 """
 import os
 from io import StringIO
-
 from unittest import TestCase
 
-from zope import component
+import zope.location.interfaces
+from zope.component.testfiles.views import IC
 from zope.configuration.exceptions import ConfigurationError
-from zope.configuration.xmlconfig import xmlconfig, XMLConfig
+from zope.configuration.xmlconfig import XMLConfig
+from zope.configuration.xmlconfig import xmlconfig
 from zope.interface import implementer
 from zope.publisher.browser import TestRequest
 from zope.security.checker import ProxyFactory
 from zope.security.interfaces import Forbidden
 from zope.security.proxy import removeSecurityProxy
-
+from zope.testing import cleanup
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
-import zope.location.interfaces
 import zope.browserresource
-from zope.component.testfiles.views import IC
+from zope import component
 from zope.browserresource.tests import support
-from zope.testing import cleanup
 
 
 template = u"""<configure
@@ -58,6 +57,7 @@ request._vh_root = support.site
 def defineCheckers():
     # define the appropriate checker for a FileResource for these tests
     from zope.security.protectclass import protectName
+
     from zope.browserresource.file import FileResource
     protectName(FileResource, '__call__', 'zope.Public')
 

@@ -15,24 +15,27 @@
 """
 
 import os
-import time
 import re
+import time
+from email.utils import formatdate
+from email.utils import mktime_tz
+from email.utils import parsedate_tz
 
-from email.utils import formatdate, parsedate_tz, mktime_tz
-
+from zope.component import adapter
+from zope.component import queryMultiAdapter
 from zope.contenttype import guess_content_type
-from zope.interface import implementer, provider
-from zope.component import adapter, queryMultiAdapter
+from zope.interface import implementer
+from zope.interface import provider
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
-from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IBrowserPublisher
+from zope.publisher.interfaces.browser import IBrowserRequest
 
-from zope.browserresource.resource import Resource
 from zope.browserresource.interfaces import IETag
 from zope.browserresource.interfaces import IFileResource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
+from zope.browserresource.resource import Resource
 
 
 ETAG_RX = re.compile(r'[*]|(?:W/)?"(?:[^"\\]|[\\].)*"')

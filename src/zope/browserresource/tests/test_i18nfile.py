@@ -13,29 +13,31 @@
 ##############################################################################
 """I18n File-Resource Tests
 """
-from unittest import TestCase
 import os
+from unittest import TestCase
 
-from zope.publisher.interfaces import NotFound
-
+from zope.component import adapter
+from zope.component import provideAdapter
+from zope.component import provideUtility
+from zope.i18n.interfaces import INegotiator
+from zope.i18n.interfaces import IUserPreferredCharsets
+from zope.i18n.interfaces import IUserPreferredLanguages
+from zope.i18n.negotiator import negotiator
 from zope.interface import implementer
-from zope.component import provideAdapter, provideUtility, adapter
+from zope.publisher.browser import BrowserLanguages
+from zope.publisher.browser import TestRequest
+from zope.publisher.http import HTTPCharsets
+from zope.publisher.http import IHTTPRequest
+from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.testing import cleanup
 
-from zope.i18n.interfaces import IUserPreferredCharsets, IUserPreferredLanguages
-
-from zope.publisher.http import IHTTPRequest, HTTPCharsets
-from zope.publisher.browser import BrowserLanguages, TestRequest
-from zope.publisher.interfaces.browser import IBrowserRequest
-
-from zope.browserresource.interfaces import IFileResource, IETag
+import zope.browserresource.tests as p
+from zope.browserresource.file import File
 from zope.browserresource.i18nfile import I18nFileResource
 from zope.browserresource.i18nfile import I18nFileResourceFactory
-from zope.browserresource.file import File
-import zope.browserresource.tests as p
-
-from zope.i18n.interfaces import INegotiator
-from zope.i18n.negotiator import negotiator
+from zope.browserresource.interfaces import IETag
+from zope.browserresource.interfaces import IFileResource
 
 
 test_directory = os.path.dirname(p.__file__)

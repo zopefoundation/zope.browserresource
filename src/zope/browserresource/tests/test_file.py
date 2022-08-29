@@ -17,23 +17,25 @@
 import doctest
 import os
 import re
+import time
 import unittest
 from email.utils import formatdate
-import time
 
+from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zope.component import provideAdapter, adapter
+from zope.component import provideAdapter
 from zope.interface import implementer
 from zope.interface.verify import verifyObject
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
-
 from zope.testing import cleanup
 from zope.testing.renormalizing import RENormalizing
 
-from zope.browserresource.file import FileResourceFactory, FileETag
-from zope.browserresource.interfaces import IFileResource, IETag
+from zope.browserresource.file import FileETag
+from zope.browserresource.file import FileResourceFactory
+from zope.browserresource.interfaces import IETag
+from zope.browserresource.interfaces import IFileResource
 
 
 @adapter(IFileResource, IBrowserRequest)

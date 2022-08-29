@@ -19,18 +19,24 @@ from zope.component import queryUtility
 from zope.component.interface import provideInterface
 from zope.component.zcml import handler
 from zope.configuration.exceptions import ConfigurationError
-from zope.interface import Interface, implementer, provider
+from zope.interface import Interface
+from zope.interface import implementer
+from zope.interface import provider
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-from zope.security.checker import CheckerPublic, NamesChecker, Checker
+from zope.security.checker import Checker
+from zope.security.checker import CheckerPublic
+from zope.security.checker import NamesChecker
 from zope.security.proxy import Proxy
 
 from zope.browserresource.directory import DirectoryResourceFactory
-from zope.browserresource.file import File, FileResourceFactory
+from zope.browserresource.file import File
+from zope.browserresource.file import FileResourceFactory
 from zope.browserresource.i18nfile import I18nFileResourceFactory
 from zope.browserresource.icon import IconViewFactory
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
+
 
 allowed_names = ('GET', 'HEAD', 'publishTraverse', 'browserDefault',
                  'request', '__call__')
