@@ -5,6 +5,8 @@
 4.5 (unreleased)
 ================
 
+- Add support for Python 3.9, 3.10.
+
 - Drop support for ``python setup.py test``.
 
 
