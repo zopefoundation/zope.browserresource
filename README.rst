@@ -10,8 +10,8 @@
         :target: https://pypi.org/project/zope.browserresource/
         :alt: Supported Python versions
 
-.. image:: https://travis-ci.com/zopefoundation/zope.browserresource.svg?branch=master
-        :target: https://travis-ci.com/zopefoundation/zope.browserresource
+.. image:: https://github.com/zopefoundation/zope.browserresource/actions/workflows/tests.yml/badge.svg
+        :target: https://github.com/zopefoundation/zope.browserresource/actions/workflows/tests.yml
 
 .. image:: https://coveralls.io/repos/github/zopefoundation/zope.browserresource/badge.svg?branch=master
         :target: https://coveralls.io/github/zopefoundation/zope.browserresource?branch=master
