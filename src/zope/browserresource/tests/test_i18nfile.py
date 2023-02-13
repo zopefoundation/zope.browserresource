@@ -43,10 +43,10 @@ from zope.browserresource.interfaces import IFileResource
 test_directory = os.path.dirname(p.__file__)
 
 
-class AbstractTestII18nAwareMixin(object):
+class AbstractTestII18nAwareMixin:
 
     def setUp(self):
-        super(AbstractTestII18nAwareMixin, self).setUp()
+        super().setUp()
         self.object = self._createObject()
         self.object.setDefaultLanguage('fr')
 
@@ -70,7 +70,7 @@ class AbstractTestII18nAwareMixin(object):
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class MyETag(object):
+class MyETag:
 
     def __init__(self, context, request):
         pass
@@ -82,7 +82,7 @@ class MyETag(object):
 class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
     def setUp(self):
-        super(Test, self).setUp()
+        super().setUp()
         provideAdapter(HTTPCharsets, (IHTTPRequest,), IUserPreferredCharsets)
         provideAdapter(BrowserLanguages, (IHTTPRequest,),
                        IUserPreferredLanguages)

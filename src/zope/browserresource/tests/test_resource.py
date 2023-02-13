@@ -29,7 +29,7 @@ from zope.browserresource.tests import support
 class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
 
     def setUp(self):
-        super(TestResource, self).setUp()
+        super().setUp()
         component.provideAdapter(AbsoluteURL, (None, None), IAbsoluteURL)
 
     def testGlobal(self):
@@ -69,4 +69,4 @@ class TestResource(support.SiteHandler, cleanup.CleanUp, unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(TestResource)
+    return unittest.defaultTestLoader.loadTestsFromTestCase(TestResource)

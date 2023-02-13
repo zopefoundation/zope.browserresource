@@ -44,7 +44,7 @@ allowed_names = ('GET', 'HEAD', 'publishTraverse', 'browserDefault',
 
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class ResourceFactoryWrapper(object):
+class ResourceFactoryWrapper:
 
     def __init__(self, factory, checker, name):
         self.__factory = factory
@@ -147,7 +147,7 @@ def icon(_context, name, for_, file=None, resource=None,
         )
     elif file is not None:
         resource = '-'.join(for_.__module__.split('.'))
-        resource = "%s-%s-%s" % (resource, iname, name)
+        resource = "{}-{}-{}".format(resource, iname, name)
         ext = os.path.splitext(file)[1]
         if ext:
             resource += ext
@@ -179,7 +179,7 @@ def icon(_context, name, for_, file=None, resource=None,
     )
 
 
-class I18nResource(object):
+class I18nResource:
 
     type = IBrowserRequest
     default_allowed_attributes = '__call__'

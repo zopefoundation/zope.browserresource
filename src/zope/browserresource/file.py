@@ -117,7 +117,7 @@ def quote_etag(etag):
     return '"%s"' % etag.replace('\\', '\\\\').replace('"', '\\"')
 
 
-class File(object):
+class File:
     """
     An object representing a file on the filesystem.
 
@@ -161,7 +161,7 @@ class FileResource(BrowserView, Resource):
           >>> resource.publishTraverse(request, '_testData')
           Traceback (most recent call last):
           ...
-          NotFound: Object: None, name: '_testData'
+          zope.publisher.interfaces.NotFound: Object: None, name: '_testData'
 
         '''
         raise NotFound(None, name)
@@ -326,7 +326,7 @@ class FileResource(BrowserView, Resource):
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class FileETag(object):
+class FileETag:
     """
     Default implementation of `.IETag`
     registered for `.IFileResource`
@@ -338,7 +338,7 @@ class FileETag(object):
         self.request = request
 
     def __call__(self, mtime, content):
-        return '%s-%s' % (mtime, len(content))
+        return '{}-{}'.format(mtime, len(content))
 
 
 def setCacheControl(response, secs=86400):
@@ -350,7 +350,7 @@ def setCacheControl(response, secs=86400):
 
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class FileResourceFactory(object):
+class FileResourceFactory:
     """
     Implementation of `.IResourceFactory` producing `FileResource`.
 

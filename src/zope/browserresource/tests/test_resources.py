@@ -15,11 +15,9 @@
 """
 
 import doctest
-import re
 import unittest
 
 from zope.testing import cleanup
-from zope.testing.renormalizing import RENormalizing
 
 
 def setUp(test):
@@ -31,15 +29,9 @@ def tearDown(test):
 
 
 def test_suite():
-    checker = RENormalizing([
-        # Python 3 includes module name in exceptions
-        (re.compile(r"zope.publisher.interfaces.NotFound"),
-         "NotFound"),
-    ])
     return unittest.TestSuite((
         doctest.DocTestSuite(
             'zope.browserresource.resources',
             setUp=setUp, tearDown=tearDown,
-            checker=checker,
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
     ))

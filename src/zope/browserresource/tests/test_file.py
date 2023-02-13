@@ -16,7 +16,6 @@
 
 import doctest
 import os
-import re
 import time
 import unittest
 from email.utils import formatdate
@@ -30,7 +29,6 @@ from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
 from zope.testing import cleanup
-from zope.testing.renormalizing import RENormalizing
 
 from zope.browserresource.file import FileETag
 from zope.browserresource.file import FileResourceFactory
@@ -40,7 +38,7 @@ from zope.browserresource.interfaces import IFileResource
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class MyETag(object):
+class MyETag:
 
     def __init__(self, context, request):
         pass
@@ -51,7 +49,7 @@ class MyETag(object):
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class NoETag(object):
+class NoETag:
 
     def __init__(self, context, request):
         pass
@@ -283,17 +281,10 @@ class TestFile(unittest.TestCase):
 
 
 def test_suite():
-    checker = RENormalizing([
-        # Python 3 includes module name in exceptions
-        (re.compile(r"zope.publisher.interfaces.NotFound"),
-         "NotFound"),
-    ])
-
     return unittest.TestSuite((
         unittest.defaultTestLoader.loadTestsFromName(__name__),
         doctest.DocTestSuite(
             'zope.browserresource.file',
             setUp=setUp, tearDown=tearDown,
-            checker=checker,
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
     ))

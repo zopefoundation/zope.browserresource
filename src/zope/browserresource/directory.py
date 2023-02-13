@@ -46,7 +46,7 @@ def empty():
 # we only need this class as a context for DirectoryResource
 
 
-class Directory(object):
+class Directory:
 
     def __init__(self, path, checker, name):
         self.path = path
@@ -150,7 +150,7 @@ class DirectoryResource(BrowserView, Resource):
 
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class DirectoryResourceFactory(object):
+class DirectoryResourceFactory:
 
     factoryClass = DirectoryResource
 

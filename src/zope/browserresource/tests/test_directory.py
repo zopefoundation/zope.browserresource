@@ -47,7 +47,7 @@ checker = NamesChecker(
 
 
 @implementer(IContained)
-class Ob(object):
+class Ob:
     __parent__ = __name__ = None
 
 
@@ -57,7 +57,7 @@ ob = Ob()
 class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
     def setUp(self):
-        super(Test, self).setUp()
+        super().setUp()
         provideAdapter(AbsoluteURL, (None, None), IAbsoluteURL)
 
     def testNotFound(self):
@@ -157,11 +157,11 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         request = TestRequest()
         resource = DirectoryResourceFactory(path, checker, 'files')(request)
 
-        class ImageResource(object):
+        class ImageResource:
             def __init__(self, image, request):
                 pass
 
-        class ImageResourceFactory(object):
+        class ImageResourceFactory:
             def __init__(self, path, checker, name):
                 pass
 

@@ -70,7 +70,7 @@ class Resources(BrowserView):
       >>> resources.publishTraverse(request, 'does-not-exist')
       Traceback (most recent call last):
       ...
-      NotFound: Object: <zope.browserresource.resources.Resources object at 0x...>,
+      zope.publisher.interfaces.NotFound: Object: <zope.browserresource.resources.Resources object at 0x...>,
                 name: 'does-not-exist'
 
     When accessed without further traversing, it returns an empty page and no

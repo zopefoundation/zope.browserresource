@@ -18,7 +18,7 @@ from zope.component import getAdapter
 from zope.location import locate
 
 
-class IconView(object):
+class IconView:
 
     def __init__(self, context, request, rname, alt, width, height):
         self.context = context
@@ -38,7 +38,7 @@ class IconView(object):
         return resource()
 
 
-class IconViewFactory(object):
+class IconViewFactory:
 
     def __init__(self, rname, alt, width, height):
         self.rname = rname

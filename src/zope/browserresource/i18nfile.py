@@ -78,7 +78,7 @@ class I18nFileResource(FileResource):
 
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class I18nFileResourceFactory(object):
+class I18nFileResourceFactory:
 
     def __init__(self, data, defaultLanguage):
         self.__data = data
