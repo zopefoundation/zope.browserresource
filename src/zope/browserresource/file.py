@@ -15,24 +15,27 @@
 """
 
 import os
-import time
 import re
+import time
+from email.utils import formatdate
+from email.utils import mktime_tz
+from email.utils import parsedate_tz
 
-from email.utils import formatdate, parsedate_tz, mktime_tz
-
+from zope.component import adapter
+from zope.component import queryMultiAdapter
 from zope.contenttype import guess_content_type
-from zope.interface import implementer, provider
-from zope.component import adapter, queryMultiAdapter
+from zope.interface import implementer
+from zope.interface import provider
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
-from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IBrowserPublisher
+from zope.publisher.interfaces.browser import IBrowserRequest
 
-from zope.browserresource.resource import Resource
 from zope.browserresource.interfaces import IETag
 from zope.browserresource.interfaces import IFileResource
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
+from zope.browserresource.resource import Resource
 
 
 ETAG_RX = re.compile(r'[*]|(?:W/)?"(?:[^"\\]|[\\].)*"')
@@ -114,7 +117,7 @@ def quote_etag(etag):
     return '"%s"' % etag.replace('\\', '\\\\').replace('"', '\\"')
 
 
-class File(object):
+class File:
     """
     An object representing a file on the filesystem.
 
@@ -148,13 +151,17 @@ class FileResource(BrowserView, Resource):
         '''File resources can't be traversed further, so raise NotFound if
         someone tries to traverse it.
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> resource.publishTraverse(request, '_testData')
           Traceback (most recent call last):
           ...
-          NotFound: Object: None, name: '_testData'
+          zope.publisher.interfaces.NotFound: Object: None, name: '_testData'
 
         '''
         raise NotFound(None, name)
@@ -162,7 +169,11 @@ class FileResource(BrowserView, Resource):
     def browserDefault(self, request):
         '''Return a callable for processing browser requests.
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest(REQUEST_METHOD='GET')
           >>> resource = factory(request)
           >>> view, next = resource.browserDefault(request)
@@ -199,7 +210,11 @@ class FileResource(BrowserView, Resource):
     def GET(self):
         '''Return a file data for downloading with GET requests
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> with open(testFilePath, 'rb') as f:
@@ -274,7 +289,11 @@ class FileResource(BrowserView, Resource):
     def HEAD(self):
         '''Return proper headers and no content for HEAD requests
 
-          >>> factory = FileResourceFactory(testFilePath, nullChecker, 'test.txt')
+          >>> TestRequest = globals()['TestRequest']
+          >>> testFilePath = globals()['testFilePath']
+          >>> nullChecker = globals()['nullChecker']
+          >>> factory = FileResourceFactory(
+          ...     testFilePath, nullChecker, 'test.txt')
           >>> request = TestRequest()
           >>> resource = factory(request)
           >>> resource.HEAD() == b''
@@ -307,7 +326,7 @@ class FileResource(BrowserView, Resource):
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class FileETag(object):
+class FileETag:
     """
     Default implementation of `.IETag`
     registered for `.IFileResource`
@@ -319,7 +338,7 @@ class FileETag(object):
         self.request = request
 
     def __call__(self, mtime, content):
-        return '%s-%s' % (mtime, len(content))
+        return '{}-{}'.format(mtime, len(content))
 
 
 def setCacheControl(response, secs=86400):
@@ -331,7 +350,7 @@ def setCacheControl(response, secs=86400):
 
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class FileResourceFactory(object):
+class FileResourceFactory:
     """
     Implementation of `.IResourceFactory` producing `FileResource`.
 

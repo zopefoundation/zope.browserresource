@@ -16,29 +16,29 @@
 
 import doctest
 import os
-import re
+import time
 import unittest
 from email.utils import formatdate
-import time
 
+from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zope.component import provideAdapter, adapter
+from zope.component import provideAdapter
 from zope.interface import implementer
 from zope.interface.verify import verifyObject
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.checker import NamesChecker
-
 from zope.testing import cleanup
-from zope.testing.renormalizing import RENormalizing
 
-from zope.browserresource.file import FileResourceFactory, FileETag
-from zope.browserresource.interfaces import IFileResource, IETag
+from zope.browserresource.file import FileETag
+from zope.browserresource.file import FileResourceFactory
+from zope.browserresource.interfaces import IETag
+from zope.browserresource.interfaces import IFileResource
 
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class MyETag(object):
+class MyETag:
 
     def __init__(self, context, request):
         pass
@@ -49,14 +49,13 @@ class MyETag(object):
 
 @adapter(IFileResource, IBrowserRequest)
 @implementer(IETag)
-class NoETag(object):
+class NoETag:
 
     def __init__(self, context, request):
         pass
 
     def __call__(self, mtime, content):
         return None
-
 
 
 def setUp(test):
@@ -72,8 +71,8 @@ def setUp(test):
 def tearDown(test):
     cleanup.tearDown()
 
-class TestFile(unittest.TestCase):
 
+class TestFile(unittest.TestCase):
 
     def setUp(self):
         cleanup.setUp()
@@ -98,11 +97,12 @@ class TestFile(unittest.TestCase):
 
     def test_FileResource_GET_sets_cache_headers(self):
         # Test caching headers set by FileResource.GET
-        factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
 
         timestamp = time.time()
 
-        file = factory._FileResourceFactory__file # get mangled file
+        file = factory._FileResourceFactory__file  # get mangled file
         file.lmt = timestamp
         file.lmh = formatdate(timestamp, usegmt=True)
 
@@ -119,23 +119,26 @@ class TestFile(unittest.TestCase):
         self.assertTrue(request.response.getHeader('Expires'))
 
     def test_FileResource_GET_if_modified_since(self):
-        #Test If-Modified-Since header support
+        # Test If-Modified-Since header support
 
-        factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
 
         timestamp = time.time()
 
-        file = factory._FileResourceFactory__file # get mangled file
+        file = factory._FileResourceFactory__file  # get mangled file
         file.lmt = timestamp
         file.lmh = formatdate(timestamp, usegmt=True)
 
         before = timestamp - 1000
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True))
+        request = TestRequest(
+            HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True))
         resource = factory(request)
         self.assertTrue(resource.GET())
 
         after = timestamp + 1000
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
+        request = TestRequest(
+            HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
         resource = factory(request)
         self.assertFalse(resource.GET())
 
@@ -144,8 +147,7 @@ class TestFile(unittest.TestCase):
 
         # Cache control headers and ETag are set on 304 responses
 
-        self.assertEqual(request.response.getHeader('ETag'),
-                         '"myetag"')
+        self.assertEqual(request.response.getHeader('ETag'), '"myetag"')
         self.assertEqual(request.response.getHeader('Cache-Control'),
                          'public,max-age=86400')
         self.assertTrue(request.response.getHeader('Expires'))
@@ -165,18 +167,20 @@ class TestFile(unittest.TestCase):
         # resource
 
         file.lmt = None
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
+        request = TestRequest(
+            HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True))
         resource = factory(request)
         self.assertTrue(resource.GET())
 
     def test_FileResource_GET_if_none_match(self):
         # Test If-None-Match header support
 
-        factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
 
         timestamp = time.time()
 
-        file = factory._FileResourceFactory__file # get mangled file
+        file = factory._FileResourceFactory__file  # get mangled file
         file.lmt = timestamp
         file.lmh = formatdate(timestamp, usegmt=True)
 
@@ -220,19 +224,20 @@ class TestFile(unittest.TestCase):
     def test_FileResource_GET_if_none_match_and_if_modified_since(self):
         # Test combined If-None-Match and If-Modified-Since header support
 
-        factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
 
         timestamp = time.time()
 
-        file = factory._FileResourceFactory__file # get mangled file
+        file = factory._FileResourceFactory__file  # get mangled file
         file.lmt = timestamp
         file.lmh = formatdate(timestamp, usegmt=True)
 
         # We've a match
 
         after = timestamp + 1000
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True),
-                              HTTP_IF_NONE_MATCH='"myetag"')
+        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(
+            after, usegmt=True), HTTP_IF_NONE_MATCH='"myetag"')
         resource = factory(request)
         self.assertFalse(resource.GET())
 
@@ -241,33 +246,34 @@ class TestFile(unittest.TestCase):
 
         # Last-modified matches, but ETag doesn't
 
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(after, usegmt=True),
-                              HTTP_IF_NONE_MATCH='"otheretag"')
+        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(
+            after, usegmt=True), HTTP_IF_NONE_MATCH='"otheretag"')
         resource = factory(request)
         self.assertTrue(resource.GET())
 
         # ETag matches but last-modified doesn't
 
         before = timestamp - 1000
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True),
-                              HTTP_IF_NONE_MATCH='"myetag"')
+        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(
+            before, usegmt=True), HTTP_IF_NONE_MATCH='"myetag"')
         resource = factory(request)
         self.assertTrue(resource.GET())
-
 
         # Both don't match
 
         before = timestamp - 1000
-        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(before, usegmt=True),
-                              HTTP_IF_NONE_MATCH='"otheretag"')
+        request = TestRequest(HTTP_IF_MODIFIED_SINCE=formatdate(
+            before, usegmt=True), HTTP_IF_NONE_MATCH='"otheretag"')
         resource = factory(request)
         self.assertTrue(resource.GET())
 
     def test_FileResource_GET_works_without_IETag_adapter(self):
-        # Test backwards compatibility with users of <3.11 that do not provide an ETagAdatper
+        # Test backwards compatibility with users of <3.11 that do not provide
+        # an ETagAdatper
 
         getGlobalSiteManager().unregisterAdapter(MyETag)
-        factory = FileResourceFactory(self.testFilePath, self.nullChecker, 'test.txt')
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
         request = TestRequest()
         resource = factory(request)
         self.assertTrue(resource.GET())
@@ -275,17 +281,10 @@ class TestFile(unittest.TestCase):
 
 
 def test_suite():
-    checker = RENormalizing([
-        # Python 3 includes module name in exceptions
-        (re.compile(r"zope.publisher.interfaces.NotFound"),
-         "NotFound"),
-    ])
-
     return unittest.TestSuite((
         unittest.defaultTestLoader.loadTestsFromName(__name__),
         doctest.DocTestSuite(
             'zope.browserresource.file',
             setUp=setUp, tearDown=tearDown,
-            checker=checker,
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
     ))

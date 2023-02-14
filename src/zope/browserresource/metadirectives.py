@@ -13,10 +13,13 @@
 ##############################################################################
 """ZCML directives for defining browser resources
 """
-from zope.configuration.fields import GlobalObject, GlobalInterface
-from zope.configuration.fields import Path, MessageID
+from zope.configuration.fields import GlobalInterface
+from zope.configuration.fields import GlobalObject
+from zope.configuration.fields import MessageID
+from zope.configuration.fields import Path
 from zope.interface import Interface
-from zope.schema import TextLine, Int
+from zope.schema import Int
+from zope.schema import TextLine
 from zope.security.zcml import Permission
 
 
@@ -26,20 +29,21 @@ class IBasicResourceInformation(Interface):
     """
 
     layer = GlobalInterface(
-        title=u"The layer the resource should be found in",
-        description=u"""
+        title="The layer the resource should be found in",
+        description="""
         For information on layers, see the documentation for the skin
         directive. Defaults to "default".""",
         required=False
-        )
+    )
 
     permission = Permission(
-        title=u"The permission needed to access the resource.",
-        description=u"""
+        title="The permission needed to access the resource.",
+        description="""
         If a permission isn't specified, the resource will always be
         accessible.""",
         required=False
-        )
+    )
+
 
 class IResourceDirective(IBasicResourceInformation):
     """
@@ -49,8 +53,8 @@ class IResourceDirective(IBasicResourceInformation):
     """
 
     name = TextLine(
-        title=u"The name of the resource",
-        description=u"""
+        title="The name of the resource",
+        description="""
         This is the name used in resource urls. Resource urls are of
         the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
@@ -58,30 +62,30 @@ class IResourceDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     factory = GlobalObject(
-        title=u"Resource Factory",
-        description=u"The factory used to create the resource. The factory "
-                    u"should only expect to get the request passed when "
-                    u"called.",
+        title="Resource Factory",
+        description="The factory used to create the resource. The factory "
+                    "should only expect to get the request passed when "
+                    "called.",
         required=False
-        )
+    )
 
     file = Path(
-        title=u"File",
-        description=u"The file containing the resource data. The resource "
-                    u"type that will be created depends on file extension. "
-                    u"The named IResourceFactoryFactory utilities are "
-                    u"registered per extension. If no factory is registered "
-                    u"for given file extension, the default FileResource "
-                    u"factory will be used.",
+        title="File",
+        description="The file containing the resource data. The resource "
+                    "type that will be created depends on file extension. "
+                    "The named IResourceFactoryFactory utilities are "
+                    "registered per extension. If no factory is registered "
+                    "for given file extension, the default FileResource "
+                    "factory will be used.",
         required=False
-        )
+    )
 
     image = Path(
-        title=u"Image",
-        description=u"""
+        title="Image",
+        description="""
         If the image attribute is used, then an image resource, rather
         than a file resource will be created.
 
@@ -89,11 +93,11 @@ class IResourceDirective(IBasicResourceInformation):
         registered per extension. Use the "file" attribute instead.
         """,
         required=False
-        )
+    )
 
     template = Path(
-        title=u"Template",
-        description=u"""
+        title="Template",
+        description="""
         If the template attribute is used, then a page template resource,
         rather than a file resource will be created.
 
@@ -103,7 +107,8 @@ class IResourceDirective(IBasicResourceInformation):
         package.
         """,
         required=False
-        )
+    )
+
 
 class II18nResourceDirective(IBasicResourceInformation):
     """
@@ -111,8 +116,8 @@ class II18nResourceDirective(IBasicResourceInformation):
     """
 
     name = TextLine(
-        title=u"The name of the resource",
-        description=u"""
+        title="The name of the resource",
+        description="""
         This is the name used in resource urls. Resource urls are of
         the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
@@ -120,13 +125,14 @@ class II18nResourceDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     defaultLanguage = TextLine(
-        title=u"Default language",
-        description=u"Defines the default language",
+        title="Default language",
+        description="Defines the default language",
         required=False
-        )
+    )
+
 
 class II18nResourceTranslationSubdirective(IBasicResourceInformation):
     """
@@ -134,20 +140,20 @@ class II18nResourceTranslationSubdirective(IBasicResourceInformation):
     """
 
     language = TextLine(
-        title=u"Language",
-        description=u"Language of this translation of the resource",
+        title="Language",
+        description="Language of this translation of the resource",
         required=True
-        )
+    )
 
     file = Path(
-        title=u"File",
-        description=u"The file containing the resource data.",
+        title="File",
+        description="The file containing the resource data.",
         required=False
-        )
+    )
 
     image = Path(
-        title=u"Image",
-        description=u"""
+        title="Image",
+        description="""
         If the image attribute is used, then an image resource, rather
         than a file resource will be created.
 
@@ -155,7 +161,8 @@ class II18nResourceTranslationSubdirective(IBasicResourceInformation):
         Use the "file" attribute instead.
         """,
         required=False
-        )
+    )
+
 
 class IResourceDirectoryDirective(IBasicResourceInformation):
     """
@@ -165,8 +172,8 @@ class IResourceDirectoryDirective(IBasicResourceInformation):
     """
 
     name = TextLine(
-        title=u"The name of the resource",
-        description=u"""
+        title="The name of the resource",
+        description="""
         This is the name used in resource urls. Resource urls are of
         the form ``<site>/@@/resourcename``, where ``<site>`` is the url of
         "site", a folder with a site manager.
@@ -174,13 +181,13 @@ class IResourceDirectoryDirective(IBasicResourceInformation):
         We make resource urls site-relative (as opposed to
         content-relative) so as not to defeat caches.""",
         required=True
-        )
+    )
 
     directory = Path(
-        title=u"Directory",
-        description=u"The directory containing the resource data.",
+        title="Directory",
+        description="The directory containing the resource data.",
         required=True
-        )
+    )
 
 
 class IIconDirective(Interface):
@@ -189,59 +196,59 @@ class IIconDirective(Interface):
     """
 
     name = TextLine(
-        title=u"The name of the icon.",
-        description=u"The name shows up in URLs/paths. For example 'foo'.",
+        title="The name of the icon.",
+        description="The name shows up in URLs/paths. For example 'foo'.",
         required=True
-        )
+    )
 
     for_ = GlobalInterface(
-        title=u"The interface this icon is for.",
-        description=u"""
+        title="The interface this icon is for.",
+        description="""
         The icon will be for all objects that implement this
         interface.""",
         required=True
-        )
+    )
 
     file = Path(
-        title=u"File",
-        description=u"The file containing the icon.",
+        title="File",
+        description="The file containing the icon.",
         required=False
-        )
+    )
 
     resource = TextLine(
-        title=u"Resource",
-        description=u"A resource containing the icon.",
+        title="Resource",
+        description="A resource containing the icon.",
         required=False
-        )
+    )
 
     title = MessageID(
-        title=u"Title",
-        description=u"Descriptive title",
+        title="Title",
+        description="Descriptive title",
         required=False
-        )
+    )
 
     layer = GlobalInterface(
-        title=u"The layer the icon should be found in",
-        description=u"""
+        title="The layer the icon should be found in",
+        description="""
         For information on layers, see the documentation for the skin
         directive. Defaults to "default".""",
         required=False
-        )
+    )
 
     width = Int(
-        title=u"The width of the icon.",
-        description=u"""
+        title="The width of the icon.",
+        description="""
         The width will be used for the <img width="..." />
         attribute. Defaults to 16.""",
         required=False,
         default=16
-        )
+    )
 
     height = Int(
-        title=u"The height of the icon.",
-        description=u"""
+        title="The height of the icon.",
+        description="""
         The height will be used for the <img height="..." />
         attribute. Defaults to 16.""",
         required=False,
         default=16
-        )
+    )

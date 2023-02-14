@@ -19,25 +19,32 @@ from zope.component import queryUtility
 from zope.component.interface import provideInterface
 from zope.component.zcml import handler
 from zope.configuration.exceptions import ConfigurationError
-from zope.interface import Interface, implementer, provider
+from zope.interface import Interface
+from zope.interface import implementer
+from zope.interface import provider
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-from zope.security.checker import CheckerPublic, NamesChecker, Checker
+from zope.security.checker import Checker
+from zope.security.checker import CheckerPublic
+from zope.security.checker import NamesChecker
 from zope.security.proxy import Proxy
 
 from zope.browserresource.directory import DirectoryResourceFactory
-from zope.browserresource.file import File, FileResourceFactory
+from zope.browserresource.file import File
+from zope.browserresource.file import FileResourceFactory
 from zope.browserresource.i18nfile import I18nFileResourceFactory
 from zope.browserresource.icon import IconViewFactory
 from zope.browserresource.interfaces import IResourceFactory
 from zope.browserresource.interfaces import IResourceFactoryFactory
 
+
 allowed_names = ('GET', 'HEAD', 'publishTraverse', 'browserDefault',
                  'request', '__call__')
 
+
 @implementer(IResourceFactory)
 @provider(IResourceFactoryFactory)
-class ResourceFactoryWrapper(object):
+class ResourceFactoryWrapper:
 
     def __init__(self, factory, checker, name):
         self.__factory = factory
@@ -85,7 +92,7 @@ def resource(_context, name, layer=IDefaultBrowserLayer,
         discriminator=('resource', name, IBrowserRequest, layer),
         callable=resourceHandler,
         args=(name, layer, checker, factory, file, _context.info),
-        )
+    )
 
 
 def resourceHandler(name, layer, checker, factory, file, context_info):
@@ -96,7 +103,8 @@ def resourceHandler(name, layer, checker, factory, file, context_info):
         factory_factory = queryUtility(IResourceFactoryFactory, ext,
                                        FileResourceFactory)
         factory = factory_factory(file, checker, name)
-    handler('registerAdapter', factory, (layer,), Interface, name, context_info)
+    handler('registerAdapter', factory, (layer,),
+            Interface, name, context_info)
 
 
 def resourceDirectory(_context, name, directory, layer=IDefaultBrowserLayer,
@@ -110,7 +118,7 @@ def resourceDirectory(_context, name, directory, layer=IDefaultBrowserLayer,
     if not os.path.isdir(directory):
         raise ConfigurationError(
             "Directory %s does not exist" % directory
-            )
+        )
 
     factory = DirectoryResourceFactory(directory, checker, name)
     _context.action(
@@ -130,16 +138,16 @@ def icon(_context, name, for_, file=None, resource=None,
     if title is None:
         title = iname
         if title.startswith('I'):
-            title = title[1:] # Remove leading 'I'
+            title = title[1:]  # Remove leading 'I'
 
     if file is not None and resource is not None:
         raise ConfigurationError(
             "Can't use more than one of file, and resource "
             "attributes for icon directives"
-            )
+        )
     elif file is not None:
         resource = '-'.join(for_.__module__.split('.'))
-        resource = "%s-%s-%s" % (resource, iname, name)
+        resource = "{}-{}-{}".format(resource, iname, name)
         ext = os.path.splitext(file)[1]
         if ext:
             resource += ext
@@ -152,7 +160,7 @@ def icon(_context, name, for_, file=None, resource=None,
         raise ConfigurationError(
             "At least one of the file, and resource "
             "attributes for resource directives must be specified"
-            )
+        )
 
     vfactory = IconViewFactory(resource, title, width, height)
 
@@ -166,12 +174,12 @@ def icon(_context, name, for_, file=None, resource=None,
     _context.action(
         discriminator=None,
         callable=provideInterface,
-        args=(for_.__module__+'.'+for_.getName(),
+        args=(for_.__module__ + '.' + for_.getName(),
               for_)
     )
 
 
-class I18nResource(object):
+class I18nResource:
 
     type = IBrowserRequest
     default_allowed_attributes = '__call__'
@@ -191,12 +199,12 @@ class I18nResource(object):
             raise ConfigurationError(
                 "Can't use more than one of file, and image "
                 "attributes for resource directives"
-                )
+            )
         elif file is None and image is None:
             raise ConfigurationError(
                 "At least one of the file, and image "
                 "attributes for resource directives must be specified"
-                )
+            )
 
         if image is not None:
             import warnings
@@ -210,7 +218,6 @@ class I18nResource(object):
 
         self.__data[language] = File(_context.path(file), self.name)
 
-
     def __call__(self, require=None):
         if self.name is None:
             return
@@ -219,7 +226,7 @@ class I18nResource(object):
             raise ConfigurationError(
                 "A translation for the default language (%s) "
                 "must be specified" % self.defaultLanguage
-                )
+            )
 
         permission = self.permission
         factory = I18nFileResourceFactory(self.__data, self.defaultLanguage)
@@ -243,7 +250,6 @@ class I18nResource(object):
                   factory, (self.layer,), Interface, self.name,
                   self._context.info)
         )
-
 
     def _proxyFactory(self, factory, checker):
         def proxyView(request,

@@ -2,14 +2,14 @@
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
 # All Rights Reserved.
-# 
+#
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
-# 
+#
 ##############################################################################
 """Icon support
 """
@@ -18,7 +18,7 @@ from zope.component import getAdapter
 from zope.location import locate
 
 
-class IconView(object):
+class IconView:
 
     def __init__(self, context, request, rname, alt, width, height):
         self.context = context
@@ -37,7 +37,8 @@ class IconView(object):
         locate(resource, zope.component.hooks.getSite(), self.rname)
         return resource()
 
-class IconViewFactory(object):
+
+class IconViewFactory:
 
     def __init__(self, rname, alt, width, height):
         self.rname = rname
@@ -47,4 +48,4 @@ class IconViewFactory(object):
 
     def __call__(self, context, request):
         return IconView(context, request, self.rname, self.alt,
-                       self.width, self.height)
+                        self.width, self.height)

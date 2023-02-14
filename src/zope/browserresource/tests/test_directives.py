@@ -18,15 +18,14 @@ import os
 import unittest
 from io import StringIO
 
-import zope.browserresource
 import zope.publisher.defaultview
 import zope.security.management
-
-from zope import component
 from zope.component import provideAdapter
 from zope.configuration.exceptions import ConfigurationError
-from zope.configuration.xmlconfig import xmlconfig, XMLConfig
-from zope.interface import Interface, implementer
+from zope.configuration.xmlconfig import XMLConfig
+from zope.configuration.xmlconfig import xmlconfig
+from zope.interface import Interface
+from zope.interface import implementer
 from zope.publisher.browser import TestRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.proxy import ProxyFactory
@@ -34,6 +33,8 @@ from zope.testing import cleanup
 from zope.traversing.adapters import DefaultTraversable
 from zope.traversing.interfaces import ITraversable
 
+import zope.browserresource
+from zope import component
 from zope.browserresource.directory import DirectoryResource
 from zope.browserresource.file import FileResource
 from zope.browserresource.i18nfile import I18nFileResource
@@ -45,12 +46,13 @@ tests_path = os.path.join(
     os.path.dirname(zope.browserresource.__file__),
     'tests')
 
-template = u"""<configure
+template = """<configure
    xmlns='http://namespaces.zope.org/zope'
    xmlns:browser='http://namespaces.zope.org/browser'
    i18n_domain='zope'>
    %s
    </configure>"""
+
 
 class IV(Interface):
     def index():
@@ -58,18 +60,19 @@ class IV(Interface):
 
 
 @implementer(IV)
-class R1(object):
+class R1:
     pass
 
 
 class ITestLayer(IBrowserRequest):
     """Test Layer."""
 
+
 class ITestSkin(ITestLayer):
     """Test Skin."""
 
 
-class MyResource(object):
+class MyResource:
 
     def __init__(self, request):
         self.request = request
@@ -78,13 +81,14 @@ class MyResource(object):
 class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
     def setUp(self):
-        super(TestZCML, self).setUp()
+        super().setUp()
         XMLConfig('meta.zcml', zope.browserresource)()
         provideAdapter(DefaultTraversable, (None,), ITraversable)
         self.request = TestRequest()
 
     def testI18nResource(self):
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         path1 = os.path.join(tests_path, 'testfiles', 'test.pt')
         path2 = os.path.join(tests_path, 'testfiles', 'test2.pt')
@@ -92,7 +96,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         xmlconfig(StringIO(
             template
             %
-            u'''
+            '''
             <browser:i18n-resource name="test" defaultLanguage="fr">
               <browser:translation language="en" file="%s" />
               <browser:translation language="fr" file="%s" />
@@ -112,7 +116,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         # translation must be provided for the default language
         config = StringIO(
             template %
-            u'''
+            '''
             <browser:i18n-resource name="test" defaultLanguage="fr">
               <browser:translation language="en" file="%s" />
               <browser:translation language="lt" file="%s" />
@@ -127,7 +131,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
         xmlconfig(StringIO(
             template %
-            u'''
+            '''
             <browser:resource
                 name="index.html"
                 factory="
@@ -145,11 +149,12 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         from zope.security.interfaces import ForbiddenAttribute
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
 
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         xmlconfig(StringIO(
             template %
-            u'''
+            '''
             <browser:resource
                 name="index.html"
                 file="%s"
@@ -171,16 +176,16 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         with open(path, 'rb') as f:
             self.assertEqual(unwrapped_r._testData(), f.read())
 
-
     def testPluggableFactory(self):
 
-        class ImageResource(object):
+        class ImageResource:
             def __init__(self, image, request):
                 pass
 
-        class ImageResourceFactory(object):
+        class ImageResourceFactory:
             def __init__(self, path, checker, name):
                 pass
+
             def __call__(self, request):
                 return ImageResource(None, request)
 
@@ -190,7 +195,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
         xmlconfig(StringIO(
             template %
-            u'''
+            '''
             <browser:resource
                 name="test.gif"
                 file="%s"
@@ -204,11 +209,12 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
     def testDirectory(self):
         path = os.path.join(tests_path, 'testfiles', 'subdir')
 
-        self.assertEqual(component.queryAdapter(self.request, name='dir'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='dir'), None)
 
         xmlconfig(StringIO(
             template %
-            u'''
+            '''
             <browser:resourceDirectory
                 name="dir"
                 directory="%s"
@@ -230,7 +236,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
         inexistent_dir = StringIO(
             template %
-            u'''
+            '''
             <browser:resourceDirectory
                 name="dir"
                 directory="does-not-exist"
@@ -240,12 +246,13 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         self.assertRaises(ConfigurationError, xmlconfig, inexistent_dir)
 
     def test_SkinResource(self):
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         path = os.path.join(tests_path, 'testfiles', 'test.pt')
         xmlconfig(StringIO(
             template %
-            u'''
+            '''
             <browser:resource
                 name="test"
                 file="%s"
@@ -255,16 +262,17 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
             ''' % path
         ))
 
-        self.assertEqual(component.queryAdapter(self.request, name='test'), None)
+        self.assertEqual(
+            component.queryAdapter(self.request, name='test'), None)
 
         r = component.getAdapter(TestRequest(skin=ITestSkin), name='test')
         with open(path, 'rb') as f:
             self.assertEqual(r._testData(), f.read())
 
 
-class Context(object):
+class Context:
 
-    class info(object):
+    class info:
         file = __file__
         line = 1
 
@@ -277,10 +285,12 @@ class Context(object):
     def action(self, **kwargs):
         self.actions.append(kwargs)
 
+
 class _AbstractHandlerTest(unittest.TestCase):
 
     if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
-        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+        assertRaisesRegex = (
+            unittest.TestCase.assertRaisesRegexp)  # pragma: no cover
 
     def setUp(self):
         self.context = Context()
@@ -336,6 +346,7 @@ class TestResource(_AbstractHandlerTest):
 
     def test_template_warning(self):
         self._check_warning(template='template')
+
 
 class TestI18nResource(_AbstractHandlerTest):
 

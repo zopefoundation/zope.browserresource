@@ -13,7 +13,8 @@
 ##############################################################################
 """Resource interfaces
 """
-from zope.interface import Interface, Attribute
+from zope.interface import Attribute
+from zope.interface import Interface
 
 
 class IResource(Interface):
@@ -39,6 +40,7 @@ class IResource(Interface):
         Return the absolute URL of this resource.
         """
 
+
 class IFileResource(IResource):
     """
     A resource representing a single file.
@@ -54,6 +56,7 @@ class IResourceFactory(Interface):
 
     def __call__(request):
         """Return an `IResource` object"""
+
 
 class IResourceFactoryFactory(Interface):
     """
@@ -71,6 +74,7 @@ class IResourceFactoryFactory(Interface):
 
     def __call__(path, checker, name):
         """Return an IResourceFactory"""
+
 
 class IETag(Interface):
     """

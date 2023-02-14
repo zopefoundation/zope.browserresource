@@ -15,29 +15,28 @@
 """
 import os
 from io import StringIO
-
 from unittest import TestCase
 
-from zope import component
+import zope.location.interfaces
+from zope.component.testfiles.views import IC
 from zope.configuration.exceptions import ConfigurationError
-from zope.configuration.xmlconfig import xmlconfig, XMLConfig
+from zope.configuration.xmlconfig import XMLConfig
+from zope.configuration.xmlconfig import xmlconfig
 from zope.interface import implementer
 from zope.publisher.browser import TestRequest
 from zope.security.checker import ProxyFactory
 from zope.security.interfaces import Forbidden
 from zope.security.proxy import removeSecurityProxy
-
+from zope.testing import cleanup
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.traversing.browser.interfaces import IAbsoluteURL
 
-import zope.location.interfaces
 import zope.browserresource
-from zope.component.testfiles.views import IC
+from zope import component
 from zope.browserresource.tests import support
-from zope.testing import cleanup
 
 
-template = u"""<configure
+template = """<configure
    xmlns='http://namespaces.zope.org/zope'
    xmlns:browser='http://namespaces.zope.org/browser'
    i18n_domain='zope'
@@ -48,16 +47,20 @@ template = u"""<configure
 
 request = TestRequest()
 
+
 @implementer(IC)
-class Ob(object):
+class Ob:
     pass
+
 
 ob = Ob()
 request._vh_root = support.site
 
+
 def defineCheckers():
     # define the appropriate checker for a FileResource for these tests
     from zope.security.protectclass import protectName
+
     from zope.browserresource.file import FileResource
     protectName(FileResource, '__call__', 'zope.Public')
 
@@ -65,7 +68,7 @@ def defineCheckers():
 class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
     def setUp(self):
-        super(Test, self).setUp()
+        super().setUp()
         XMLConfig('meta.zcml', zope.browserresource)()
         defineCheckers()
         component.provideAdapter(AbsoluteURL, (None, None), IAbsoluteURL)
@@ -81,7 +84,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Configure the icon and make sure we can render the resulting view:
         xmlconfig(StringIO(template % (
-            u'''
+            '''
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
                       file="%s" />
@@ -100,7 +103,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Make sure that the title attribute works
         xmlconfig(StringIO(template % (
-            u'''
+            '''
             <browser:icon name="zmi_icon_w_title"
                       for="zope.component.testfiles.views.IC"
                       file="%s" title="click this!" />
@@ -118,7 +121,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
 
         # Make sure that the width and height attributes work
         xmlconfig(StringIO(template % (
-            u'''
+            '''
             <browser:icon name="zmi_icon_w_width_and_height"
                       for="zope.component.testfiles.views.IC"
                       file="%s"
@@ -152,7 +155,7 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         path = os.path.join(path, 'testfiles', 'test.gif')
 
         xmlconfig(StringIO(template % (
-            u'''
+            '''
             <browser:resource name="zmi_icon_res"
                       file="%s" />
             <browser:icon name="zmi_icon"
@@ -185,19 +188,19 @@ class Test(support.SiteHandler, cleanup.CleanUp, TestCase):
         path = os.path.join(path, 'testfiles', 'test.gif')
 
         config = StringIO(template % (
-            u'''
+            '''
             <browser:resource name="zmi_icon_res"
-                      file="%s" />
+                      file="{}" />
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
-                      file="%s"
+                      file="{}"
                       resource="zmi_icon_res" />
-            ''' % (path, path)
+            '''.format(path, path)
         ))
         self.assertRaises(ConfigurationError, xmlconfig, config)
 
         config = StringIO(template % (
-            u"""
+            """
             <browser:icon name="zmi_icon"
                       for="zope.component.testfiles.views.IC"
                       />

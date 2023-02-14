@@ -22,23 +22,25 @@ from zope.traversing.interfaces import IContainmentRoot
 
 import zope.browserresource.resource
 
+
 @implementer(zope.component.interfaces.ISite, IContainmentRoot)
 class Site:
 
     def getSiteManager(self):
         return zope.component.getGlobalSiteManager()
 
+
 site = Site()
 
 
-class SiteHandler(object):
+class SiteHandler:
 
     def setUp(self):
-        super(SiteHandler, self).setUp()
+        super().setUp()
         zope.component.hooks.setSite(site)
         zope.component.provideAdapter(
             zope.browserresource.resource.AbsoluteURL)
 
     def tearDown(self):
         zope.component.hooks.setSite()
-        super(SiteHandler, self).tearDown()
+        super().tearDown()

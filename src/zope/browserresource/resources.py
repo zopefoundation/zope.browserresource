@@ -26,15 +26,15 @@ class Resources(BrowserView):
     """
     A view that can be traversed further to access browser resources.
 
-    This view is usually registered for :class:`zope.component.interfaces.ISite` objects
-    with no name, so resources will be available at ``<site>/@@/<resource>``.
+    This view is usually registered for
+    :class:`zope.component.interfaces.ISite` objects with no name, so resources
+    will be available at ``<site>/@@/<resource>``.
 
-    Let's test how it's traversed to get registered resources. Let's create
-    a sample resource class and register it.
+    Let's test how it's traversed to get registered resources. Let's create a
+    sample resource class and register it.
 
       >>> from zope.component import provideAdapter
       >>> from zope.interface import Interface
-      >>> from zope.publisher.interfaces import NotFound
       >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
       >>> from zope.publisher.browser import TestRequest
 
@@ -46,8 +46,8 @@ class Resources(BrowserView):
 
       >>> provideAdapter(Resource, (IDefaultBrowserLayer,), Interface, 'test')
 
-    Now, create a site and request objects and get the Resources object to
-    work with.
+    Now, create a site and request objects and get the Resources object to work
+    with.
 
       >>> site = object()
       >>> request = TestRequest()
@@ -70,7 +70,7 @@ class Resources(BrowserView):
       >>> resources.publishTraverse(request, 'does-not-exist')
       Traceback (most recent call last):
       ...
-      NotFound: Object: <zope.browserresource.resources.Resources object at 0x...>,
+      zope.publisher.interfaces.NotFound: Object: <zope.browserresource.resources.Resources object at 0x...>,
                 name: 'does-not-exist'
 
     When accessed without further traversing, it returns an empty page and no
@@ -82,8 +82,8 @@ class Resources(BrowserView):
       >>> path == ()
       True
 
-    The Resources view also provides ``__getitem__`` method for use in templates.
-    It is equivalent to `publishTraverse`.
+    The Resources view also provides ``__getitem__`` method for use in
+    templates. It is equivalent to `publishTraverse`.
 
       >>> resource = resources['test']
       >>> resource.__parent__ is site
@@ -92,13 +92,14 @@ class Resources(BrowserView):
       True
       >>> resource()
       'http://localhost/testresource'
-    """
+    """  # noqa: E501 line too long
 
     def publishTraverse(self, request, name):
         """
         Query for the default adapter on *request* named *name* and return it.
 
-        This is usually a `.IResource` as registered with `.IResourceDirective`.
+        This is usually a `.IResource` as registered with
+        `.IResourceDirective`.
 
         The resource object is `located <.locate>` beneath the context of this
         object with the given *name*.
@@ -115,13 +116,13 @@ class Resources(BrowserView):
         return resource
 
     def browserDefault(self, request):
-        '''See zope.publisher.interfaces.browser.IBrowserPublisher interface'''
+        """See zope.publisher.interfaces.browser.IBrowserPublisher interface"""
         return empty, ()
 
     def __getitem__(self, name):
         """
-        A helper method to make this view usable from templates,
-        so resources can be accessed in template like ``context/@@/<resourcename>``.
+        A helper method to make this view usable from templates, so resources
+        can be accessed in template like ``context/@@/<resourcename>``.
         """
         return self.publishTraverse(self.request, name)
 
