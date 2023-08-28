@@ -2,7 +2,7 @@
  Changes
 =========
 
-5.1 (unreleased)
+5.1 (2023-08-28)
 ================
 
 - Make tests more resilient.
