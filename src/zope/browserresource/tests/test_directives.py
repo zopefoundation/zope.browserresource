@@ -90,8 +90,8 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(
             component.queryAdapter(self.request, name='test'), None)
 
-        path1 = os.path.join(tests_path, 'testfiles', 'test.pt')
-        path2 = os.path.join(tests_path, 'testfiles', 'test2.pt')
+        path1 = os.path.join(tests_path, 'testfiles', 'test.html')
+        path2 = os.path.join(tests_path, 'testfiles', 'test2.html')
 
         xmlconfig(StringIO(
             template
@@ -147,7 +147,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
 
     def testFile(self):
         from zope.security.interfaces import ForbiddenAttribute
-        path = os.path.join(tests_path, 'testfiles', 'test.pt')
+        path = os.path.join(tests_path, 'testfiles', 'test.html')
 
         self.assertEqual(
             component.queryAdapter(self.request, name='test'), None)
@@ -249,7 +249,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(
             component.queryAdapter(self.request, name='test'), None)
 
-        path = os.path.join(tests_path, 'testfiles', 'test.pt')
+        path = os.path.join(tests_path, 'testfiles', 'test.html')
         xmlconfig(StringIO(
             template %
             '''

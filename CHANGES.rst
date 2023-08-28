@@ -5,7 +5,7 @@
 5.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Make tests more resilient.
 
 
 5.0 (2023-02-14)

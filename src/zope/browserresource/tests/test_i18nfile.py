@@ -99,7 +99,7 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
         ob = self._createObject()
         self.assertRaises(ValueError, ob.setDefaultLanguage, 'ru')
 
-    def _createDict(self, filename1='test.pt', filename2='test2.pt'):
+    def _createDict(self, filename1='test.html', filename2='test2.html'):
         path1 = os.path.join(test_directory, 'testfiles', filename1)
         path2 = os.path.join(test_directory, 'testfiles', filename2)
         return {
@@ -143,9 +143,9 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
         self.assertEqual(response.getHeader('Content-Type'), 'text/plain')
 
         # case 3: prefer fr, have it, should get fr
-        path = os.path.join(test_directory, 'testfiles', 'test2.pt')
+        path = os.path.join(test_directory, 'testfiles', 'test2.html')
         resource = I18nFileResourceFactory(
-            self._createDict('test.pt', 'test2.pt'), 'en')(
+            self._createDict('test.html', 'test2.html'), 'en')(
             TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         with open(path, 'rb') as f:
@@ -177,7 +177,7 @@ class Test(AbstractTestII18nAwareMixin, cleanup.CleanUp, TestCase):
 
         # case 3: prefer fr, have it, should get fr
         resource = I18nFileResourceFactory(
-            self._createDict('test.pt', 'test2.pt'), 'en')(
+            self._createDict('test.html', 'test2.html'), 'en')(
             TestRequest(HTTP_ACCEPT_LANGUAGE='fr'))
 
         self.assertEqual(resource.HEAD(), b'')
