@@ -147,7 +147,7 @@ def icon(_context, name, for_, file=None, resource=None,
         )
     elif file is not None:
         resource = '-'.join(for_.__module__.split('.'))
-        resource = "{}-{}-{}".format(resource, iname, name)
+        resource = f"{resource}-{iname}-{name}"
         ext = os.path.splitext(file)[1]
         if ext:
             resource += ext
