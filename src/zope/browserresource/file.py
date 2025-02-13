@@ -338,7 +338,7 @@ class FileETag:
         self.request = request
 
     def __call__(self, mtime, content):
-        return '{}-{}'.format(mtime, len(content))
+        return f'{mtime}-{len(content)}'
 
 
 def setCacheControl(response, secs=86400):

@@ -163,7 +163,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         ))
 
         unwrapped_r = component.getAdapter(self.request, name='index.html')
-        self.assertTrue(isinstance(unwrapped_r, FileResource))
+        self.assertIsInstance(unwrapped_r, FileResource)
         r = ProxyFactory(unwrapped_r)
         self.assertEqual(r.__name__, "index.html")
 
@@ -204,7 +204,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         ))
 
         r = component.getAdapter(self.request, name='test.gif')
-        self.assertTrue(isinstance(r, ImageResource))
+        self.assertIsInstance(r, ImageResource)
 
     def testDirectory(self):
         path = os.path.join(tests_path, 'testfiles', 'subdir')
@@ -223,7 +223,7 @@ class TestZCML(cleanup.CleanUp, unittest.TestCase):
         ))
 
         r = component.getAdapter(self.request, name='dir')
-        self.assertTrue(isinstance(r, DirectoryResource))
+        self.assertIsInstance(r, DirectoryResource)
         r = ProxyFactory(r)
         self.assertEqual(r.__name__, "dir")
 

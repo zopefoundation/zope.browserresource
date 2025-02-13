@@ -73,7 +73,7 @@ class AbsoluteURL(zope.traversing.browser.absoluteurl.AbsoluteURL):
         self.request = request
 
     def _createUrl(self, baseUrl, name):
-        return "{}/@@/{}".format(baseUrl, name)
+        return f"{baseUrl}/@@/{name}"
 
     def __str__(self):
         name = self.context.__name__
