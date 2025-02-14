@@ -37,7 +37,7 @@ TESTS_REQUIRE = ZCML_REQUIRES + [
 ]
 
 setup(name='zope.browserresource',
-      version='5.2.dev0',
+      version='5.2',
       url='https://github.com/zopefoundation/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.dev',
