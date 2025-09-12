@@ -15,7 +15,6 @@
 """
 import os
 
-from setuptools import find_packages
 from setuptools import setup
 
 
@@ -33,11 +32,11 @@ ZCML_REQUIRES = [
 
 TESTS_REQUIRE = ZCML_REQUIRES + [
     'zope.testing',
-    'zope.testrunner',
+    'zope.testrunner >= 6.4',
 ]
 
 setup(name='zope.browserresource',
-      version='5.3.dev0',
+      version='6.0.dev0',
       url='https://github.com/zopefoundation/zope.browserresource/',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.dev',
@@ -62,9 +61,6 @@ setup(name='zope.browserresource',
       description='Browser resources implementation for Zope.',
       long_description=long_description,
       license='ZPL-2.1',
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
-      namespace_packages=['zope'],
       include_package_data=True,
       python_requires='>=3.9',
       install_requires=[
