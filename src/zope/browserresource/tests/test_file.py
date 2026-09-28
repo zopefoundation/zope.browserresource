@@ -118,6 +118,32 @@ class TestFile(unittest.TestCase):
                          'public,max-age=86400')
         self.assertTrue(request.response.getHeader('Expires'))
 
+    def test_FileResource_HEAD_sets_cache_headers(self):
+        # HEAD should report the same headers as GET, in particular the
+        # ETag has to be a quoted string just like the one GET sends,
+        # otherwise a client cannot reuse it in a later If-None-Match
+        # request.
+        factory = FileResourceFactory(
+            self.testFilePath, self.nullChecker, 'test.txt')
+
+        timestamp = time.time()
+
+        file = factory._FileResourceFactory__file  # get mangled file
+        file.lmt = timestamp
+        file.lmh = formatdate(timestamp, usegmt=True)
+
+        request = TestRequest()
+        resource = factory(request)
+        self.assertEqual(resource.HEAD(), b'')
+
+        self.assertEqual(request.response.getHeader('Last-Modified'), file.lmh)
+
+        self.assertEqual(request.response.getHeader('ETag'),
+                         '"myetag"')
+        self.assertEqual(request.response.getHeader('Cache-Control'),
+                         'public,max-age=86400')
+        self.assertTrue(request.response.getHeader('Expires'))
+
     def test_FileResource_GET_if_modified_since(self):
         # Test If-Modified-Since header support
 

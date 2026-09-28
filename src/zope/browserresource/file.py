@@ -308,7 +308,7 @@ class FileResource(BrowserView, Resource):
         response.setHeader('Content-Type', file.content_type)
         response.setHeader('Last-Modified', file.lmh)
         if etag:
-            response.setHeader('ETag', etag)
+            response.setHeader('ETag', quote_etag(etag))
         setCacheControl(response, self.cacheTimeout)
         return b''
 

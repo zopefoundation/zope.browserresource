@@ -11,6 +11,11 @@
 
 - Drop support for Python 3.9.
 
+- Fix ``FileResource.HEAD`` sending an unquoted ``ETag`` header, unlike
+  ``GET`` which quotes it as required by RFC 7232. This made an ``ETag``
+  obtained from a ``HEAD`` request unusable in a later conditional
+  ``If-None-Match`` request.
+
 
 6.0 (2025-09-12)
 ================
