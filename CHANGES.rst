@@ -167,7 +167,7 @@
 ===================
 
 - Add an ability to forbid publishing of some files in the resource directory,
-  this is done by fnmatch'ing the wildcards in the ``forbidden_names``class
+  this is done by fnmatch'ing the wildcards in the ``forbidden_names`` class
   attribute of ``DirectoryResource``. By default, the ``.svn`` is in that
   attribute, so directories won't publish subversion system directory that can
   contain private information.
